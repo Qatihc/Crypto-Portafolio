@@ -18,13 +18,18 @@ app.get('/', (req, res) => {
 })
 
 app.use((err, req, res, next) => {
-  if (!err || err.statusCode == 404){
+  if (!err || err.status == 404) {
     return res.status(404).send('Page not found.')
   }
-  if (!err.statusCode || err.statusCode == 500){
-    if (process.env.DEVELOPMENT) return res.status(500).send(err)
-    return res.status(500).send('Internal server error.')
+
+  if (err.status) {
+    return res.status(err.status).send(err.message)
   }
+
+  // Si no tiene err status code asumo que es 500
+  if (process.env.DEVELOPMENT) return res.status(500).send(err)
+  return res.status(500).send('Internal server error.')
+
 })
 
 module.exports = app;

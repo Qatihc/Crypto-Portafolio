@@ -1,9 +1,20 @@
-
 const User = require('../models/userSchema');
+const {changeUsernameValidator} = require('../inputValidators/userValidator');
 
-const changeUsername = (req, res, next) => {
-  const {id} = res.locals.user
-  return res.send(id)
+const changeUsername = async (req, res, next) => {
+  const err = changeUsernameValidator(req.body);
+  if (err) return next(err)
+
+  const {user} = res.locals;
+  const {newUsername} = req.body;
+  user.username = newUsername;
+  try {
+    await user.save();
+  }
+  catch(err) {
+    return next(err)
+  }
+  return res.status(200).send();
 }
 
 module.exports = {changeUsername}
