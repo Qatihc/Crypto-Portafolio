@@ -30,9 +30,7 @@ const registerUser = async (req, res, next) => {
 
   const {username, password} = req.body;
   try {
-    const user = await User.findOne({username});
-    console.log(username)
-    // _lower: username.toLowerCase()
+    const user = await User.findOne({username_lower: username.toLowerCase()});
     if (user) return res.status(400).send({err: inputErrorMessages.duplicatedUser})
     await User.create({
       username,
@@ -67,32 +65,6 @@ const changePassword = async (req, res, next) => {
   }
 }
 
-const requireAuth = async (req, res, next) => {
-  const {token} = req.headers;
-  if (!token) return res.status(401).send({error: 'please log in'});
-
-  try {
-    const user = await findJwtUser(token);
-    res.locals.user = user;
-    return next();
-  } catch (err) {
-    return next(err);
-  }
-}
-
-const optionalAuth = async (req, res, next) => {
-  const {token} = req.headers;
-  if (!token) return next();
-
-  try {
-    const user = await findJwtUser(token);
-    res.locals.user = user;
-    return next();
-  } catch (err) {
-    return next();
-  }
-}
-
 const login = async (req, res, next) => {
   const {token} = req.headers;
   const {username, password} = req.body;
@@ -122,5 +94,29 @@ const login = async (req, res, next) => {
   }
 }
 
+const requireAuth = async (req, res, next) => {
+  const {token} = req.headers;
+  if (!token) return res.status(401).send({error: 'please log in'});
+  try {
+    const user = await findJwtUser(token);
+    res.locals.user = user;
+    return next();
+  } catch (err) {
+    return next(err);
+  }
+}
+
+const optionalAuth = async (req, res, next) => {
+  const {token} = req.headers;
+  if (!token) return next();
+
+  try {
+    const user = await findJwtUser(token);
+    res.locals.user = user;
+    return next();
+  } catch (err) {
+    return next();
+  }
+}
 
 module.exports = {registerUser, changePassword, requireAuth, optionalAuth, login}

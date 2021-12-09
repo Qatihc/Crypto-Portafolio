@@ -29,7 +29,7 @@ describe('User routes', () => {
     expect(res.statusCode).toBe(200);
   })
 
-  it('should not change username capitalization', async () => {
+  it('db should not change username capitalization', async () => {
     const res = await request(app)
     .post('/api/auth/login')
     .send({
@@ -40,6 +40,15 @@ describe('User routes', () => {
     expect(res.statusCode).toBe(200);
     expect(res.body).toHaveProperty('username');
     expect(res.body.username).toBe(TEST_USERNAME);
+  })
+
+  it('user should be able to change username', async () => {
+    const res = await request(app)
+    .post('/api/auth/login')
+    .send({
+      username: TEST_USERNAME,
+      password: TEST_PASSWORD
+    })
   })
   
 })

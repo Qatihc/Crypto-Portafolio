@@ -22,6 +22,7 @@ app.use((err, req, res, next) => {
     return res.status(404).send('Page not found.')
   }
   if (!err.statusCode || err.statusCode == 500){
+    if (process.env.DEVELOPMENT) return res.status(500).send(err)
     return res.status(500).send('Internal server error.')
   }
 })

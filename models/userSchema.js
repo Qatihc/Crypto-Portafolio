@@ -21,30 +21,28 @@ const UserSchema = new Schema({
   }
 })
 
-UserSchema.pre('save', function(next) {
+const userMiddleware = async function(next) {
+  try {
+    if (this.modifiedPaths().includes('password')) {
+      const saltRounds = 10;
+      salt = await bcrypt.genSalt(saltRounds)
+      hash = await bcrypt.hash(this.password, salt)
+      this.password = hash;
+    }
 
-  if (this.modifiedPaths().includes('password')) {
-    const saltRounds = 10;
-    bcrypt.genSalt(saltRounds, (err, salt) => {
-      if (err) return next(err);
-      bcrypt.hash(this.password, salt, (err, hash) => {
-        if (err) return next(err);
-        this.password = hash;
-        return next()
-      })
-    })
+    if (this.modifiedPaths().includes('username')) {
+      this.username_lower = this.username.toLowerCase()
+    }
+  } 
+  catch(err) {
+    return next(err)
   }
-  else {
-    return next()
-  }
-});
 
-UserSchema.pre('save', function(next) {
-  if (this.modifiedPaths().includes('username')) {
-    this.username_lower = this.username.toLowerCase()
-  }
   return next()
-})
+}
+
+UserSchema.pre('save', userMiddleware);
+UserSchema.pre('update', userMiddleware);
 
 const User = mongoose.model('User', UserSchema);
 module.exports = User;

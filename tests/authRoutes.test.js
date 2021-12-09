@@ -75,6 +75,12 @@ describe('Auth routes with correct input', () => {
     expect(res.statusCode).toBe(200);
   })
 
+  it('password should not be plain text', async () => {
+    user = User.findOne({username: TEST_USERNAME})
+    expect(user.password).not.toBe(TEST_CHANGE_PASSWORD)
+    expect(user.password).not.toBe(TEST_PASSWORD)
+  })
+
   it('user should be able to log in with new password', async () => {
     const res = await request(app)
       .post('/api/auth/login')
@@ -154,7 +160,7 @@ describe('Auth routes with invalid input', () => {
     await request(app)
       .post('/api/auth/register')
       .send({
-        username: TEST_USERNAME,
+        username: TEST_USERNAME.toLowerCase(),
         password: TEST_PASSWORD,
         confirmPassword: TEST_PASSWORD
       });
