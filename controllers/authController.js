@@ -11,7 +11,6 @@ const findJwtUser = (token) => {
     try {
       const {id} = jwt.verify(token, process.env.JWT_SECRET);
       const {username} = await User.findOne({_id: id});
-
       if (username) {
         return resolve({
           id,
@@ -19,7 +18,6 @@ const findJwtUser = (token) => {
         });
       }
       return reject('invalid token');
-      
     } catch(err) {
       return reject('invalid token');
     }
@@ -33,14 +31,16 @@ const registerUser = async (req, res, next) => {
   const {username, password} = req.body;
   try {
     const user = await User.findOne({username});
+    console.log(username)
+    // _lower: username.toLowerCase()
     if (user) return res.status(400).send({err: inputErrorMessages.duplicatedUser})
-
     await User.create({
       username,
       password
     });
     res.status(200).send();
   } catch (err) {
+    console.log(err)
     return next(err);
   }
 }
@@ -51,7 +51,7 @@ const changePassword = async (req, res, next) => {
 
   const {username, password, newPassword} = req.body;
   try {
-    const user = await User.findOne({username});
+    const user = await User.findOne({username_lower: username.toLowerCase()});
     if (!user) return res.status(400).send({err: inputErrorMessages.userNotFound});
     
     const passwordMatches = await bcrypt.compare(password, user.password);
@@ -73,7 +73,7 @@ const requireAuth = async (req, res, next) => {
 
   try {
     const user = await findJwtUser(token);
-    res.locals.user  = user;
+    res.locals.user = user;
     return next();
   } catch (err) {
     return next(err);
@@ -107,7 +107,7 @@ const login = async (req, res, next) => {
   }
 
   try {
-    const user = await User.findOne({username});
+    const user = await User.findOne({username_lower: username.toLowerCase()});
     if (!user) return res.status(400).send({err: exports.userNotFound});
 
     const passwordMatches = await bcrypt.compare(password, user.password);

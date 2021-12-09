@@ -3,12 +3,7 @@ const db = require('./testDbConnection');
 const app = require('../app');
 const User = require('../models/userSchema');
 
-
-const TEST_USERNAME = 'QWEASDFSFFFFFF'.toLowerCase();
-const TEST_PASSWORD = 'Qwessss_';
-const TEST_CHANGE_PASSWORD = 'A1bcd_';
-const PROTECED_ROUTE = '/api/portfolio';
-const OPTIONAL_AUTH_ROUTE = '/api/coin/topCoins';
+const {TEST_USERNAME, TEST_PASSWORD, TEST_CHANGE_PASSWORD, PROTECED_ROUTE, OPTIONAL_AUTH_ROUTE} = require('./testSampleData')
 
 describe('Auth routes with correct input', () => {
 
