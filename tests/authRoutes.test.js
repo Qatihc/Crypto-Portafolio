@@ -1,12 +1,12 @@
 const request = require('supertest')
-const db = require('./testDb');
+const db = require('./testDbConnection');
 const app = require('../app');
 const User = require('../models/userSchema');
 
 
 const TEST_USERNAME = 'QWEASDFSFFFFFF'.toLowerCase();
 const TEST_PASSWORD = 'Qwessss_';
-const TEST_CHANGE_PASSWORD = '13143124124124124';
+const TEST_CHANGE_PASSWORD = 'A1bcd_';
 const PROTECED_ROUTE = '/api/portfolio';
 const OPTIONAL_AUTH_ROUTE = '/api/coin/topCoins';
 
@@ -15,16 +15,12 @@ describe('Auth routes with correct input', () => {
   beforeAll(async () => {
     await db.connect();
     await db.mongoose.connection.db.dropDatabase();
-    await db.disconnect();
   })
 
-  beforeEach(async () => {
-    await db.connect();
-  });
-
-  afterEach(async () => {
+  afterAll(async () => {
+    await db.mongoose.connection.db.dropDatabase();
     await db.disconnect();
-  });
+  })
 
   it('should register new user', async () => {
     const res = await request(app)
@@ -56,9 +52,8 @@ describe('Auth routes with correct input', () => {
 
     expect(res.statusCode).toBe(200);
     expect(res.body).toHaveProperty('token');
-    expect(res.body).toHaveProperty('user');
-    expect(res.body.user).toHaveProperty('username');
-    expect(res.body.user.username).toBe(TEST_USERNAME);
+    expect(res.body).toHaveProperty('username');
+    expect(res.body.username).toBe(TEST_USERNAME);
 
     userToken = res.body.token;
   })
@@ -69,9 +64,8 @@ describe('Auth routes with correct input', () => {
       .set('token', userToken);
 
     expect(tokenRes.statusCode).toBe(200);
-    expect(tokenRes.body).toHaveProperty('user');
-    expect(tokenRes.body.user).toHaveProperty('username');
-    expect(tokenRes.body.user.username).toBe(TEST_USERNAME);
+    expect(tokenRes.body).toHaveProperty('username');
+    expect(tokenRes.body.username).toBe(TEST_USERNAME);
   })
 
   it('user should be able to change their password', async () => {
@@ -96,9 +90,8 @@ describe('Auth routes with correct input', () => {
 
     expect(res.statusCode).toBe(200);
     expect(res.body).toHaveProperty('token');
-    expect(res.body).toHaveProperty('user');
-    expect(res.body.user).toHaveProperty('username');
-    expect(res.body.user.username).toBe(TEST_USERNAME);
+    expect(res.body).toHaveProperty('username');
+    expect(res.body.username).toBe(TEST_USERNAME);
 
     userToken = res.body.token;
   })
