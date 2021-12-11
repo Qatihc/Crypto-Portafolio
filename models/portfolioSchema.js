@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const Coin = require('./coinSchema')
 const Schema = mongoose.Schema;
 
 const PortfolioSchema = new Schema({
@@ -6,11 +7,7 @@ const PortfolioSchema = new Schema({
     type: Schema.ObjectId,
     ref: 'User'
   },
-  coins: [{
-    symbol: String,
-    amount: Number,
-    avgPrice: Number,
-  }],
+  coins: [Coin],
 })
 
 const Portfolio = mongoose.model('Portfolio', PortfolioSchema);
