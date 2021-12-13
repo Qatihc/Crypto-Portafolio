@@ -7,7 +7,7 @@ const PortfolioSchema = new Schema({
     type: Schema.ObjectId,
     ref: 'User'
   },
-  coins: [Coin],
+  coins: [Coin.schema]
 })
 
 const Portfolio = mongoose.model('Portfolio', PortfolioSchema);

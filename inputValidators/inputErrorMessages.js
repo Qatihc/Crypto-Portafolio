@@ -10,6 +10,7 @@ exports.notStrongPassword = 'not strong password.'
 exports.notStrongNewPassword = 'La nueva contrasenia no es suficientemente segura.'
 exports.notMatchingPassword = 'Password y confirm password deben ser iguales.'
 exports.duplicatedUser = 'Nombre de usuario ya esta en uso'
+exports.portfolioAlreadyExists = 'El usuario ya tiene un portfolio asignado.'
 
 /* Invalid credentials */
 exports.userNotFound = 'Nombre de usuario no existe.'

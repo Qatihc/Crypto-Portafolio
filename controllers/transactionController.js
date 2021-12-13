@@ -1,13 +1,38 @@
 const Transaction = require('../models/transactionSchema');
+const Coin = require('../models/coinSchema')
+const Portfolio = require('../models/portfolioSchema')
+
+/* Mover esto a otro lado donde tenga mas sentido */
+const MAX_LATEST_TRANSACTIONS_SAVED = 10;
+
 
 const addTransaction = async (req, res) => {
-  await Transaction.create({
-    user: '60c4a857e7b4bb5484cb8bbb',
-    date: Date.now(),
-    symbol: 'btc',
-    amount: 30,
-    price: 32000
+  const {date, symbol, amount, price} = req.body
+  /* TODO: VALIDAR ARGUMENTOS, URGENTE! */
+  const {id} = res.locals.user
+  portfolio = await Portfolio.findOne({user: id})
+  if (!portfolio) return next('El usuario no tiene un portfolio creado.')
+
+  if (portfolio.coins.every(e => e.symbol != symbol)) {
+    portfolio.coins.push(await new Coin({symbol, amount: 0}))
+    await portfolio.save()
+  }
+
+  coin = portfolio.coins.find(c => c.symbol == symbol)
+  Transaction.create({
+    date: date || Date.now(),
+    amount,
+    coin: coin.id,
+    price,
   });
+
+/*   await transaction.save() */
+
+/*   if (coin.latestTransactions.length >= MAX_LATEST_TRANSACTIONS_SAVED) coin.latestTransactions.pop()
+  coin.latestTransactions.unshift(transaction)
+  await portfolio.save() */
+
+  res.status(200).send()
 }
 
 const updateTransaction = (req, res) => {

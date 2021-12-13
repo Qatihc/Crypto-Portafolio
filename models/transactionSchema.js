@@ -4,19 +4,14 @@ const Schema = mongoose.Schema;
 const User = require('./userSchema');
 
 const TransactionSchema = new Schema({
-  user: {
-    type: Schema.ObjectId,
-    ref: 'User',
+  symbol: {
+    type: String,
     required: true,
   },
   date: {
     type: Date,
+    default: Date.now(),
     required: true,
-  },
-  symbol: {
-    type: String,
-    required: true,
-    lowercase: true,
   },
   amount: {
     type: Number,
@@ -36,10 +31,11 @@ TransactionSchema.virtual('side').get(function(){
   return this.amount >= 0 ? 'buy' : 'sell';
 });
 
-TransactionSchema.pre('deleteOne', async function(next) {
-  const transactionId = this.getFilter()['_id'];
-  console.log(transactionId);
+TransactionSchema.pre('save', async function(next) {
+
+  return next()
 })
+
 
 const Transaction = mongoose.model('Transaction', TransactionSchema);
 module.exports = Transaction;

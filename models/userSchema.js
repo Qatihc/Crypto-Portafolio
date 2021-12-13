@@ -21,7 +21,7 @@ const UserSchema = new Schema({
   }
 })
 
-const userMiddleware = async function(next) {
+const hashPassword = async function(next) {
   try {
     if (this.modifiedPaths().includes('password')) {
       const saltRounds = 10;
@@ -30,19 +30,28 @@ const userMiddleware = async function(next) {
       this.password = hash;
     }
 
-    if (this.modifiedPaths().includes('username')) {
+/*     if (this.modifiedPaths().includes('username')) {
       this.username_lower = this.username.toLowerCase()
-    }
-  } 
-  catch(err) {
+    } */
+  } catch(err) {
     return next(err)
   }
 
   return next()
 }
 
-UserSchema.pre('save', userMiddleware);
-UserSchema.pre('update', userMiddleware);
+const addLowerUsername = async function(next) {
+  try {
+    if (this.modifiedPaths().includes('username')) {
+      this.username_lower = this.username.toLowerCase()
+    }
+  } catch (err) {
+    return next(err)
+  }
+}
+
+UserSchema.pre(['save', 'update'], hashPassword);
+UserSchema.pre(['save', 'update'], addLowerUsername);
 
 const User = mongoose.model('User', UserSchema);
 module.exports = User;
