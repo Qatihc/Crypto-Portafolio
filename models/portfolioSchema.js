@@ -1,13 +1,11 @@
 const mongoose = require('mongoose');
-const Coin = require('./coinSchema')
 const Schema = mongoose.Schema;
 
 const PortfolioSchema = new Schema({
-  user: {
+/*   coins: [{
     type: Schema.ObjectId,
-    ref: 'User'
-  },
-  coins: [Coin.schema]
+    ref: 'Coin'
+  }] */
 })
 
 const Portfolio = mongoose.model('Portfolio', PortfolioSchema);

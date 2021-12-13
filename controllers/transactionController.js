@@ -2,10 +2,6 @@ const Transaction = require('../models/transactionSchema');
 const Coin = require('../models/coinSchema')
 const Portfolio = require('../models/portfolioSchema')
 
-/* Mover esto a otro lado donde tenga mas sentido */
-const MAX_LATEST_TRANSACTIONS_SAVED = 10;
-
-
 const addTransaction = async (req, res) => {
   const {date, symbol, amount, price} = req.body
   /* TODO: VALIDAR ARGUMENTOS, URGENTE! */
@@ -39,8 +35,8 @@ const updateTransaction = (req, res) => {
   res.send('updateTransaction')
 }
 
-const removeTransaction = (req, res) => {
-  const {transactionId} = req.body;
+const removeTransactions = (req, res) => {
+  const {transactionsId} = req.body;
   const {user} = req.locals;
 
   if (!transactionId) {
@@ -50,4 +46,4 @@ const removeTransaction = (req, res) => {
   Transaction.deleteOne({_id: transactionId});
 }
 
-module.exports = {addTransaction, updateTransaction, removeTransaction};
+module.exports = {addTransaction, updateTransaction, removeTransactions};

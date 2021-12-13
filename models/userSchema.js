@@ -18,6 +18,10 @@ const UserSchema = new Schema({
   password: {
     type: String,
     minlength: 6,
+  },
+  portfolio: {
+    type: Schema.ObjectId,
+    ref: 'Portfolio'
   }
 })
 
@@ -29,10 +33,6 @@ const hashPassword = async function(next) {
       hash = await bcrypt.hash(this.password, salt)
       this.password = hash;
     }
-
-/*     if (this.modifiedPaths().includes('username')) {
-      this.username_lower = this.username.toLowerCase()
-    } */
   } catch(err) {
     return next(err)
   }

@@ -4,6 +4,7 @@ const inputErrorMessages = require('../inputValidators/inputErrorMessages')
 const {registerValidator, changePasswordValidator} = require('../inputValidators/authValidator');
 const RequestError = require('../errorTypes/RequestError');
 const User = require('../models/userSchema');
+const Portfolio = require('../models/portfolioSchema');
 
 
 const findJwtUser = (token) => {
@@ -35,10 +36,15 @@ const registerUser = async (req, res, next) => {
     const user = await User.findOne({username_lower: username.toLowerCase()});
     if (user) return next(new RequestError(inputErrorMessages.duplicatedUser, 400))
 
+    const portfolio = new Portfolio();
+    await portfolio.save();
+
     await User.create({
       username,
-      password
+      password,
+      portfolio: portfolio.id
     });
+    
     res.status(200).send();
 
   } catch (err) {
