@@ -2,8 +2,7 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 const Coin = require('./coinSchema')
 
-/* SACAR ESTO DE AC QUYE ASCOOOOOOOOOOOOOOOOO */
-const MAX_LATEST_TRANSACTIONS = 10
+const {MAX_LATEST_TRANSACTIONS} = require('../constants')
 
 const TransactionSchema = new Schema({
   symbol: {
@@ -41,13 +40,13 @@ const ObjectId = require('mongoose').Types.ObjectId;
 
 const subtractTransactionAmountFromCoinAmount = async function() {
   /* TODO: encontrar una forma mejor de hacer esto */
-  const transactions = await Transaction.find(this.getQuery())
+  const transactionsToDelete = await Transaction.find(this.getQuery())
 
   /* Si itero sobre transactions restando coin amount uno a uno corro el riesgo de guardar
   dos veces el mismo documento, y eso genera un error, por eso calculo la cantidad que le tengo que restar
   a cada moneda y edito el amount solo una vez. */
   const totalAmountPerCoin = {}
-  transactions.forEach(t => {
+  transactionsToDelete.forEach(t => {
     if (totalAmountPerCoin[t.symbol] === undefined) totalAmountPerCoin[t.symbol] = {amount: 0, id: t.coin};
     totalAmountPerCoin[t.symbol].amount += t.amount
   })
@@ -61,46 +60,64 @@ const subtractTransactionAmountFromCoinAmount = async function() {
 
 TransactionSchema.pre('deleteMany', subtractTransactionAmountFromCoinAmount)
 
-const removeFromCoinLatestTransactions = async function() {
-  const transactions = await Transaction.find(this.getQuery())
-  const transactionIds = transactions.map(t => t.id)
-  const coinIds = transactions.map(t => t.coin)
+const updateNewLatestTransactions = async function() {
+  const transactionsToDelete = await Transaction.find(this.getQuery());
+  const transactionToDeleteIds = transactionsToDelete.map(t => t.id);
+  let coinsIds = transactionsToDelete.map(t => t.coin);
+  /* Elimino IDs repetidas */
+  coinsIds = [...new Set(coinsIds.map(c => String(c)))]
 
-  await Coin.updateMany({
-    _id: coinIds
+  await Coin.updateMany(
+  {
+    _id: coinsIds
   },
   {
     $set: {latestTransactions: []}
-  })
-}
+  });
 
-TransactionSchema.pre('deleteMany', removeFromCoinLatestTransactions)
+  const addNewLatestTransactions = async (coinId) => {
+    const recentTransactions = await Transaction.find(
+    {
+      coin: coinId,
+      _id : {$nin: transactionToDeleteIds}
+    }, 
+    null, 
+    {
+      sort: {date: - 1}, 
+      limit: MAX_LATEST_TRANSACTIONS, 
+      select: '_id'
+    })
+    const recentTransactionsIds = recentTransactions.map(t => t._id)
 
-const addNewLatestTransactions = async function() {
-  const transactions = await Transaction.find(this.getQuery())
-  const transactionIds = transactions.map(t => t.id)
-  let coinIds = transactions.map(t => t.coin)
-
-  /* Elimino IDs repetidas */
-  coinIds = [...new Set(coinIds.map(c => String(c)))]
-
-  coinIds.forEach(async (coinId) => {
-    let recentTransactions = await Transaction
-      .find({coin: coinId, _id : {$nin: transactionIds}}, null, {sort: {date: - 1}, limit: MAX_LATEST_TRANSACTIONS, select: '_id'})
-
-    recentTransactions = recentTransactions.map(t => t._id)
-    console.log(recentTransactions)
-    await Coin.updateOne({
+    await Coin.updateOne(
+    {
       _id: coinId
     },
     {
-      $push: {latestTransactions: {$each: recentTransactions}}
+      $push: {latestTransactions: {$each: recentTransactionsIds}}
     })
-  })
+  }
+
+  coinsIds.forEach(addNewLatestTransactions)
 }
 
-TransactionSchema.pre('deleteMany', addNewLatestTransactions)
+TransactionSchema.pre('deleteMany', updateNewLatestTransactions)
 
+TransactionSchema.pre('findOneAndUpdate', async function(next) {
+
+  if (this._update.amount) {
+    const transactionToUpdate = await Transaction.findOne(this.getQuery());
+    const newAmount = this._update.amount;
+    const oldAmount = transactionToUpdate.amount;
+    await Coin.updateOne(
+      {
+        _id: transactionToUpdate.coin
+      },
+      {
+        $inc: {amount: - (oldAmount - newAmount)}
+      })
+  }
+})
 
 const Transaction = mongoose.model('Transaction', TransactionSchema);
 module.exports = Transaction;

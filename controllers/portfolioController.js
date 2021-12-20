@@ -5,8 +5,7 @@ const Transaction = require('../models/transactionSchema')
 const inputErrorMessages = require('../inputValidators/inputErrorMessages');
 const RequestError = require('../errorTypes/RequestError')
 
-/* TODO: MOVER A DONDE TENGA SENTIDO */
-const MAX_LATEST_TRANSACTIONS = 10
+const {MAX_LATEST_TRANSACTIONS} = require('../constants')
 
 
 const retrieveUserPortfolio = (req, res) => {
@@ -18,12 +17,15 @@ const retrievePortfolioReturns = (req, res) => {
 }
 
 const createTransaction = async (req, res, next) => {
-  const { symbol, amount, price } = req.body;
-  let { date } = req.body;
+  const { amount, price } = req.body;
+  let { date, symbol } = req.body;
   const { portfolio } = res.locals.user;
 
-  const coinWithSameSymbol = await Coin.findOne({portfolio, symbol});
-  if (!coinWithSameSymbol) {
+  symbol = symbol.toUpperCase();
+  if (req.app.locals.symbolToCoinGeckoId[symbol] === undefined) return res.send('invalid coin');
+
+  const coinWithSameSymbolAsTransaction = await Coin.findOne({portfolio, symbol});
+  if (!coinWithSameSymbolAsTransaction) {
     await Coin.create({symbol, portfolio});
   }
 
@@ -39,6 +41,17 @@ const createTransaction = async (req, res, next) => {
 
   await coin.save();
   await transaction.save();
+
+/*   await Coin.updateOne(
+    { _id: transaction.coin },
+    {
+      $push: {
+        latestTransactions: {
+          $each: transaction.id,
+          $sort: {date: -1},
+          $slice: MAX_LATEST_TRANSACTIONS
+        }
+    }) */
 
   return res.send(transaction.id)
 }
@@ -58,12 +71,45 @@ const deleteManyTransaction = async (req, res, next) => {
   }
 }
 
-const updateTransactionAmount = async (req, res, next) => {
-  res.send('WIP')
+const updateTransaction = async (req, res, next) => {
+  const {transactionId} = req.body;
+  const updatableFields = ['amount', 'price'];
+
+  const update = {};
+  for (field in req.body) {
+    if (field && updatableFields.includes(field)) {
+      update[field] = req.body[field];
+    }
+  }
+
+  await Transaction.findOneAndUpdate({_id: transactionId}, update, {useFindAndModify: false});
+  res.send('ready go');
 }
 
-const updateTransactionPrice = async (req, res, next) => {
-  res.send('WIP')
+const retrievePortfolioCoinsPrice = async (req, res, next) => {
+  try {
+    const {portfolio} = res.locals.user;
+    const coins = await Coin.find({portfolio, amount: {$ne: 0}}, 'amount symbol');
+
+    const coinsUsdPrice = {};
+    for (coin of coins) {
+      const cgId = req.app.locals.symbolToCoinGeckoId[coin.symbol];
+      const usdPrice = req.app.locals.coinPrices[cgId].usd;
+      coinsUsdPrice[coin.symbol] = usdPrice;
+    }
+
+    res.send(coinsUsdPrice)
+  } catch (err) {
+    console.log(err)
+    next(err);
+  }
 }
 
-module.exports = {retrieveUserPortfolio, retrievePortfolioReturns, createTransaction, deleteManyTransaction};
+module.exports = {
+  retrieveUserPortfolio,
+  retrievePortfolioReturns,
+  createTransaction,
+  deleteManyTransaction,
+  updateTransaction,
+  retrievePortfolioCoinsPrice
+};

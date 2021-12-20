@@ -1,10 +1,9 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
-
-const ApiRouter = require('./routes/index.js')
-
+const ApiRouter = require('./routes/index.js');
 const app = express();
+const initializeCoinGeckoFetchJobs = require('./services/initializeCoinGeckoFetchJobs');
 
 app.use(cors());
 app.use(express.json());
@@ -29,7 +28,8 @@ app.use((err, req, res, next) => {
   // Si no tiene err status code asumo que es 500
   if (process.env.DEVELOPMENT) return res.status(500).send(err)
   return res.status(500).send('Internal server error.')
-
 })
+
+initializeCoinGeckoFetchJobs(app);
 
 module.exports = app;
