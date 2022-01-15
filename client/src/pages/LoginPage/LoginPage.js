@@ -1,9 +1,15 @@
 import React from 'react';
-import {LoginCard} from '../../components/LoginCard';
+import { LoginForm } from '../../components/LoginForm';
+
+import styles from './LoginPage.module.css'
+
+
 
 const LoginPage = () => {
   return (
-    <LoginCard />
+    <div className={styles.pageContainer}>
+      <LoginForm />
+    </div>
   )
 }
 

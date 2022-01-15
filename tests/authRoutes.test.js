@@ -75,6 +75,12 @@ describe('Auth routes with correct input', () => {
     expect(res.statusCode).toBe(200);
   })
 
+  it('password should not be plain text', async () => {
+    user = User.findOne({username: TEST_USERNAME})
+    expect(user.password).not.toBe(TEST_CHANGE_PASSWORD)
+    expect(user.password).not.toBe(TEST_PASSWORD)
+  })
+
   it('user should be able to log in with new password', async () => {
     const res = await request(app)
       .post('/api/auth/login')
@@ -154,7 +160,7 @@ describe('Auth routes with invalid input', () => {
     await request(app)
       .post('/api/auth/register')
       .send({
-        username: TEST_USERNAME,
+        username: TEST_USERNAME.toLowerCase(),
         password: TEST_PASSWORD,
         confirmPassword: TEST_PASSWORD
       });
@@ -176,7 +182,7 @@ describe('Auth routes with invalid input', () => {
       .send({
         username: TEST_USERNAME,
         password: TEST_PASSWORD,
-        confirmPassword: (TEST_PASSWORD == '') ? 'q' : ''
+        confirmPassword: TEST_PASSWORD + '._.'
       })
 
     expect(res.statusCode).toBe(400);
@@ -187,10 +193,25 @@ describe('Auth routes with invalid input', () => {
       .post('/api/auth/register')
       .send({
         username: TEST_USERNAME,
-        password: '1',
-        confirmPassword: '1'
+        password: 'a1',
+        confirmPassword: 'a1'
       })
 
     expect(res.statusCode).toBe(400);
+  })
+
+  test('invalid user token', async () => {
+    const res = await request(app)
+      .get(PROTECED_ROUTE)
+      .set('token', 'abc')
+    
+    expect(res.statusCode).toBe(401)
+  })
+
+  test('login with no data', async () => {
+    const res = await request(app)
+      .post('/api/auth/register')
+    
+    expect(res.statusCode).toBe(400)
   })
 })

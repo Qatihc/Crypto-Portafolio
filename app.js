@@ -1,10 +1,9 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
-
-const ApiRouter = require('./routes/index.js')
-
+const ApiRouter = require('./routes/index.js');
 const app = express();
+const initializeCoinGeckoFetchJobs = require('./services/initializeCoinGeckoFetchJobs');
 
 app.use(cors());
 app.use(express.json());
@@ -18,12 +17,19 @@ app.get('/', (req, res) => {
 })
 
 app.use((err, req, res, next) => {
-  if (!err || err.statusCode == 404){
+  if (!err || err.status == 404) {
     return res.status(404).send('Page not found.')
   }
-  if (!err.statusCode || err.statusCode == 500){
-    return res.status(500).send('Internal server error.')
+
+  if (err.status) {
+    return res.status(err.status).send(err.message)
   }
+
+  // Si no tiene err status code asumo que es 500
+  if (process.env.DEVELOPMENT) return res.status(500).send(err)
+  return res.status(500).send('Internal server error.')
 })
+
+initializeCoinGeckoFetchJobs(app);
 
 module.exports = app;

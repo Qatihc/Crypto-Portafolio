@@ -18,33 +18,40 @@ const UserSchema = new Schema({
   password: {
     type: String,
     minlength: 6,
+  },
+  portfolio: {
+    type: Schema.ObjectId,
+    ref: 'Portfolio'
   }
 })
 
-UserSchema.pre('save', function(next) {
+const hashPassword = async function(next) {
+  try {
+    if (this.modifiedPaths().includes('password')) {
+      const saltRounds = 10;
+      salt = await bcrypt.genSalt(saltRounds)
+      hash = await bcrypt.hash(this.password, salt)
+      this.password = hash;
+    }
+  } catch(err) {
+    return next(err)
+  }
 
-  if (this.modifiedPaths().includes('password')) {
-    const saltRounds = 10;
-    bcrypt.genSalt(saltRounds, (err, salt) => {
-      if (err) return next(err);
-      bcrypt.hash(this.password, salt, (err, hash) => {
-        if (err) return next(err);
-        this.password = hash;
-        return next()
-      })
-    })
-  }
-  else {
-    return next()
-  }
-});
-
-UserSchema.pre('save', function(next) {
-  if (this.modifiedPaths().includes('username')) {
-    this.username_lower = this.username.toLowerCase()
-  }
   return next()
-})
+}
+
+const addLowerUsername = async function(next) {
+  try {
+    if (this.modifiedPaths().includes('username')) {
+      this.username_lower = this.username.toLowerCase()
+    }
+  } catch (err) {
+    return next(err)
+  }
+}
+
+UserSchema.pre(['save', 'update'], hashPassword);
+UserSchema.pre(['save', 'update'], addLowerUsername);
 
 const User = mongoose.model('User', UserSchema);
 module.exports = User;

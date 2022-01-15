@@ -7,7 +7,7 @@ module.exports = {
     filename: 'bundle.js',
     publicPath: '/'
   },
-  entry: './src/main.js',
+  entry: './src/index.js',
   resolve: {
     modules: [path.join(__dirname, 'src'), 'node_modules'],
     alias: {
@@ -24,15 +24,19 @@ module.exports = {
         },
       },
       {
-        test: /\.css$/,
+        test: /\.css$/i,
         use: [
           {
             loader: 'style-loader',
           },
           {
             loader: 'css-loader',
-          },
+          }
         ],
+      },
+      {
+        test: /\.(png|svg|jpg|jpeg|gif)$/i,
+        type: 'asset/resource',
       },
     ],
   },

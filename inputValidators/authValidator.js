@@ -1,5 +1,6 @@
 const validator = require('validator');
 const inputErrorMessages = require('./inputErrorMessages')
+const RequestError = require('../errorTypes/RequestError')
 
 const strongPasswordOptions = {
   minLength: 6,
@@ -9,28 +10,26 @@ const strongPasswordOptions = {
   minSymbols: 1,
 }
 
-const registerValidator = (input) => {
-  const {username, password, confirmPassword} = input;
+const registerValidator = ({username, password, confirmPassword}) => {
 
-  if (!username) return {err: inputErrorMessages.noUser}
-  if (!password) return {err: inputErrorMessages.noPassword}
-  if (!confirmPassword) return {err: inputErrorMessages.noConfirmPassword}
+  if (!username) return new RequestError(inputErrorMessages.noUsername, 400)
+  if (!password) return new RequestError(inputErrorMessages.noPassword, 400)
+  if (!confirmPassword) return new RequestError(inputErrorMessages.noConfirmPassword, 400)
 
-  if (!validator.isStrongPassword(password, strongPasswordOptions)) return {err: inputErrorMessages.notStrongPassword}
-  if (!validator.equals(password, confirmPassword)) return {err: inputErrorMessages.notMatchingPassword}
+  if (!validator.isStrongPassword(password, strongPasswordOptions)) return new RequestError(inputErrorMessages.notStrongPassword, 400)
+  if (!validator.equals(password, confirmPassword)) return new RequestError(inputErrorMessages.notMatchingPassword, 400)
 
-  return {err: null}
+  return null
 }
 
-const changePasswordValidator = (input) => {
-  const {username, password, newPassword} = input;
+const changePasswordValidator = ({username, password, newPassword}) => {
 
-  if (!username) return {err: inputErrorMessages.noUser}
-  if (!password) return {err: inputErrorMessages.noPassword}
-  if (!newPassword) return {err: inputErrorMessages.noNewPassword}
+  if (!username) return new RequestError(inputErrorMessages.noUsername, 400)
+  if (!password) return new RequestError(inputErrorMessages.noPassword, 400)
+  if (!newPassword) return new RequestError(inputErrorMessages.noNewPassword, 400)
 
-  if (!validator.isStrongPassword(newPassword, strongPasswordOptions)) return {err: inputErrorMessages.notStrongNewPassword}
-  return {err: null}
+  if (!validator.isStrongPassword(newPassword, strongPasswordOptions)) return new RequestError(inputErrorMessages.notStrongNewPassword, 400)
+  return null
 }
 
 module.exports = {registerValidator, changePasswordValidator};
