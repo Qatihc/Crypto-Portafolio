@@ -4,13 +4,16 @@ import Form from "../Form/Form";
 
 import validateLoginForm from "./utils/validateLoginForm";
 import useForm from "../../hooks/useForm";
+import { login } from "../../../../app/userSlice";
+import { useDispatch } from "react-redux";
 
 const LoginForm = () => {
 
   const { formValues, formErrors, handleChange } = useForm(validateLoginForm);
-
+  const dispatch = useDispatch()
   const handleSubmit = async (e) => {
     e.preventDefault();
+    dispatch(login(formValues));
   }
 
   return (
