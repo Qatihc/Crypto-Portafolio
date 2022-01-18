@@ -22,7 +22,7 @@ const signup = async (requestBody) => {
 }
 
 const logout = () => {
-  axios.defaults.headers.common['token'] = null;
+  axios.defaults.headers.common['token'] = undefined;
   removeStoredUser();
 }
 
