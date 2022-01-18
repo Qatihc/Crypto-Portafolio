@@ -2,13 +2,15 @@ import React from 'react';
 import { Link } from "react-router-dom";
 import styles from './LandingPage.module.css';
 
-import { useSelector } from 'react-redux';
-import { currentUserSelector } from '../../app/userSlice';
+import { useSelector, useDispatch } from 'react-redux';
+import { currentUserSelector, logout } from '../../app/user/userSlice';
 
 const LandingPage = () => {
   const currentUser = useSelector(currentUserSelector);
+  const dispatch = useDispatch()
   return (
     <main className={styles.pageContainer}>
+      {(currentUser) ? <p onClick={() => dispatch(logout())}>log out</p> : null}
       <div className={styles.textContainer}>
         <h1 className={styles.title}>Crypto Portfolio</h1>
         <p className={styles.desc}>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam leo nisi, condimentum eget magna sed, venenatis dapibus tortor. Proin non lobortis nunc, vitae auctor magna. Nulla sed malesuada arcu.</p>
