@@ -1,10 +1,9 @@
-import React, { useContext } from 'react';
-import UserContext from '../../contexts/UserContext';
+import React from 'react';
 import { Link } from "react-router-dom";
 import styles from './LandingPage.module.css';
 
 const LandingPage = () => {
-  const { user } = useContext(UserContext);
+  const user = false;
   return (
     <main className={styles.pageContainer}>
       <div className={styles.textContainer}>

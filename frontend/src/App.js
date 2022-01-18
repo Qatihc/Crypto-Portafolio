@@ -1,20 +1,18 @@
 import React from 'react';
 import { Routes, Route, Link, BrowserRouter } from "react-router-dom";
 
-import UserContext from './contexts/UserContext';
-import { NavBar } from './components/NavBar';
 import { LandingPage } from './pages/LandingPage';
 import { LoginPage } from './pages/LoginPage';
 import { SignUpPage } from './pages/SignUpPage';
-import { useUser } from './hooks';
 
+import { Provider } from 'react-redux';
 import styles from './App.modules.css'
+import store from './app/store';
 
 const App = () => {
-  const [user, setUser] = useUser()
 
   return (
-    <UserContext.Provider value={{user, setUser}}>
+    <Provider store={store}>
       <BrowserRouter>
       <main className={styles.mainGrid}>
         <Routes>
@@ -24,7 +22,7 @@ const App = () => {
         </Routes>
       </main>
       </BrowserRouter>
-    </UserContext.Provider>
+    </Provider>
     )
 }
 

@@ -1,9 +1,9 @@
 import React from "react";
-import { useForm } from "../../hooks";
-import { Form } from "../Form";
-import { Input } from "../Input";
+import Input from "../Input/Input";
+import Form from "../Form/Form";
+
 import validateLoginForm from "./utils/validateLoginForm";
-import { login } from "../../api/authApi";
+import useForm from "../../hooks/useForm";
 
 const LoginForm = () => {
 
@@ -11,7 +11,6 @@ const LoginForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const {err, data} = await login(formValues);
   }
 
   return (

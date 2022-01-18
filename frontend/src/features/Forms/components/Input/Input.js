@@ -28,5 +28,5 @@ const Input = ({ name, type, label, onChange, value, errorMsg }) => {
     />
   )
 }
-
+  
 export default Input;
