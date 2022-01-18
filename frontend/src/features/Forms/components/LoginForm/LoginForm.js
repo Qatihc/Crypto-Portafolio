@@ -1,17 +1,19 @@
 import React from "react";
-import { useForm } from "../../hooks";
-import { Form } from "../Form";
-import { Input } from "../Input";
+import Input from "../Input/Input";
+import Form from "../Form/Form";
+
 import validateLoginForm from "./utils/validateLoginForm";
-import { login } from "../../api/authApi";
+import useForm from "../../hooks/useForm";
+import { login } from "../../../../app/userSlice";
+import { useDispatch } from "react-redux";
 
 const LoginForm = () => {
 
   const { formValues, formErrors, handleChange } = useForm(validateLoginForm);
-
+  const dispatch = useDispatch()
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const {err, data} = await login(formValues);
+    dispatch(login(formValues));
   }
 
   return (

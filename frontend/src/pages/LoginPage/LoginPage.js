@@ -1,9 +1,7 @@
 import React from 'react';
-import { LoginForm } from '../../components/LoginForm';
+import { LoginForm } from '../../features/Forms';
 
 import styles from './LoginPage.module.css'
-
-
 
 const LoginPage = () => {
   return (
