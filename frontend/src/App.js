@@ -4,6 +4,7 @@ import { Routes, Route, Link, BrowserRouter } from "react-router-dom";
 import { LandingPage } from './pages/LandingPage';
 import { LoginPage } from './pages/LoginPage';
 import { SignUpPage } from './pages/SignUpPage';
+import { PortfolioPage } from './pages/PortfolioPage';
 
 import { Provider } from 'react-redux';
 import styles from './App.modules.css'
@@ -19,6 +20,7 @@ const App = () => {
           <Route path="/" element={<LandingPage/>} />
           <Route path="login" element={<LoginPage />}/>
           <Route path="signup" element={<SignUpPage />}/>
+          <Route path="portfolio" element={<PortfolioPage />}/>
         </Routes>
       </main>
       </BrowserRouter>

@@ -5,7 +5,7 @@ import Form from "../Form/Form";
 import validateLoginForm from "./utils/validateLoginForm";
 import useForm from "../../hooks/useForm";
 import { useDispatch } from "react-redux";
-import { login } from "../../../../app/user/userSlice";
+import { login } from "~/src/app/user/userSlice";
 
 const LoginForm = () => {
 

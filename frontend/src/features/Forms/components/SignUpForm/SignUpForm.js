@@ -3,12 +3,15 @@ import Form from "../Form/Form";
 import Input from "../Input/Input";
 import useForm from "../../hooks/useForm";
 import validateSignUpForm from "./utils/validateSignUpForm";
+import { useDispatch } from "react-redux";
+import { signup } from "~/src/app/user/userSlice";
 
 const SignUpForm = () => {
   const { formValues, formErrors, handleChange } = useForm(validateSignUpForm);
-
+  const dispatch = useDispatch()
   const handleSubmit = async (e) => {
     e.preventDefault();
+    dispatch(signup(formValues));
   }
 
   return (
