@@ -24,6 +24,10 @@ const TransactionSchema = new Schema({
   coin: {
     type: Schema.ObjectId,
     ref: 'Coin'
+  },
+  portfolio: {
+    type: Schema.ObjectId,
+    ref: 'Portfolio'
   }
 });
 
