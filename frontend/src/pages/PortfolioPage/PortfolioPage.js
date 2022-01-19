@@ -1,9 +1,13 @@
 import React from 'react';
-import {Portfolio} from '../../components/Portfolio';
+import { fetchPortfolio } from '../../features/Portfolio/portfolioSlice';
+import { useSelector, useDispatch } from 'react-redux';
 
 const PortfolioPage = () => {
+  const dispatch = useDispatch()
+  console.log('render')
+  dispatch(fetchPortfolio())
   return (
-    <Portfolio />
+    'hola'
   )
 }
 

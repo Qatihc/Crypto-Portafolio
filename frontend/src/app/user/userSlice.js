@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk, isAnyOf } from "@reduxjs/toolkit";
 import axios from "../axiosClient";
 import userApi from "./userApi";
-import { STATUS } from "./userConstants";
+import { STATUS } from "../constants";
 
 const userSlice = createSlice({
   name: 'user',
@@ -39,7 +39,10 @@ const userSlice = createSlice({
 
 const login = createAsyncThunk('user/login', async (requestBody) => {
   const data = await userApi.login(requestBody);
-  return data;
+  return {
+    currentUser: data.username,
+    token: data.token
+  };
 })
 
 const signup = createAsyncThunk('user/signup', async (requestBody) => {

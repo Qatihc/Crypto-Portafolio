@@ -4,10 +4,12 @@ import styles from './LandingPage.module.css';
 
 import { useSelector, useDispatch } from 'react-redux';
 import { currentUserSelector, logout } from '../../app/user/userSlice';
+import { fetchPortfolio } from '../../features/Portfolio/portfolioSlice';
 
 const LandingPage = () => {
   const currentUser = useSelector(currentUserSelector);
   const dispatch = useDispatch()
+  dispatch(fetchPortfolio())
   return (
     <main className={styles.pageContainer}>
       {(currentUser) ? <p onClick={() => dispatch(logout())}>log out</p> : null}
