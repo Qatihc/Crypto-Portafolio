@@ -5,9 +5,6 @@ const Transaction = require('../models/transactionSchema')
 const inputErrorMessages = require('../inputValidators/inputErrorMessages');
 const RequestError = require('../errorTypes/RequestError')
 
-const { MAX_LATEST_TRANSACTIONS } = require('../constants')
-
-
 const retrieveUserPortfolio = async (req, res) => {
   const { portfolio } = res.locals.user;
   const coins = await Coin
@@ -64,10 +61,6 @@ const createTransaction = async (req, res, next) => {
   transaction = new Transaction({ symbol, amount, price, date, coin: coin.id, portfolio })
 
   coin.amount += transaction.amount;
-
-  /* TODO: Chequear si es realmente una de las ultimas transacciones (comparar fechas) */
-  if (coin.latestTransactions.length > MAX_LATEST_TRANSACTIONS) coin.latestTransactions.pop()
-  coin.latestTransactions.unshift(transaction.id);
 
   await coin.save();
   await transaction.save();

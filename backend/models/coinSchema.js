@@ -10,11 +10,7 @@ const CoinSchema = new Schema({
   amount: {
     type: Number,
     default: 0,
-  },
-  latestTransactions: [{
-    type: Schema.ObjectId,
-    ref: 'Transaction'
-  }]
+  }
 })
 
 const Coin = mongoose.model('Coin', CoinSchema);

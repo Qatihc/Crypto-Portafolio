@@ -64,50 +64,7 @@ const subtractTransactionAmountFromCoinAmount = async function() {
 
 TransactionSchema.pre('deleteMany', subtractTransactionAmountFromCoinAmount)
 
-const updateNewLatestTransactions = async function() {
-  const transactionsToDelete = await Transaction.find(this.getQuery());
-  const transactionToDeleteIds = transactionsToDelete.map(t => t.id);
-  let coinsIds = transactionsToDelete.map(t => t.coin);
-  /* Elimino IDs repetidas */
-  coinsIds = [...new Set(coinsIds.map(c => String(c)))]
-
-  await Coin.updateMany(
-  {
-    _id: coinsIds
-  },
-  {
-    $set: {latestTransactions: []}
-  });
-
-  const addNewLatestTransactions = async (coinId) => {
-    const recentTransactions = await Transaction.find(
-    {
-      coin: coinId,
-      _id : {$nin: transactionToDeleteIds}
-    }, 
-    null, 
-    {
-      sort: {date: - 1}, 
-      limit: MAX_LATEST_TRANSACTIONS, 
-      select: '_id'
-    })
-    const recentTransactionsIds = recentTransactions.map(t => t._id)
-
-    await Coin.updateOne(
-    {
-      _id: coinId
-    },
-    {
-      $push: {latestTransactions: {$each: recentTransactionsIds}}
-    })
-  }
-
-  coinsIds.forEach(addNewLatestTransactions)
-}
-
-TransactionSchema.pre('deleteMany', updateNewLatestTransactions)
-
-TransactionSchema.pre('findOneAndUpdate', async function(next) {
+const updateCoinAmount = async function(next) {
 
   if (this._update.amount) {
     const transactionToUpdate = await Transaction.findOne(this.getQuery());
@@ -121,7 +78,9 @@ TransactionSchema.pre('findOneAndUpdate', async function(next) {
         $inc: {amount: - (oldAmount - newAmount)}
       })
   }
-})
+}
+
+TransactionSchema.pre('findOneAndUpdate', updateCoinAmount);
 
 const Transaction = mongoose.model('Transaction', TransactionSchema);
 module.exports = Transaction;

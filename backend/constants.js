@@ -1,1 +1,0 @@
-exports.MAX_LATEST_TRANSACTIONS = 10;
