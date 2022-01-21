@@ -5,7 +5,9 @@ const validateLoginForm = {
     if (username !== 'test') return 'username must be test'
     return null;
   },
-  password: ({ password }) => true, 
+  password: ({ password }) => {
+    return null
+  }, 
 }
 
 export default validateLoginForm;

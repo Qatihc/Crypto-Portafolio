@@ -1,37 +1,20 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
-const useForm = (validateForm) => {
+const useForm = (inputNames = []) => {
 
-  /* Si no declaro un value inicial para cada input, durante el primer render estos serian no controlados,
-   pero luego de que su value cambie pasarian a ser controlados, lo cual no esta permitido. */
-  const initialState = {};
-  const inputNames = Object.keys(validateForm);
-  for (const name of inputNames) {
-    initialState[name] = '';
-  }
+  const initialState = inputNames.reduce((acc, name) => ({ ...acc, [name]: ''}), {}) 
+  const [formValues, setFormValues] = useState(initialState);
 
-  const [formValues, setFormValues] = useState({});
-  const [formErrors, setFormErrors] = useState({});
-
-
-  const handleChange = (e) => {
+  const handleInputChange = (e) => {
     const { name, value } = e.target
     const newFormValues = {
       ...formValues,
       [name]: value
     }
-
-    const inputValidator = validateForm[name];
-    const newFormErrors = {
-      ...formErrors,
-      [name]: inputValidator(newFormValues)
-    }
-    
     setFormValues(newFormValues);
-    setFormErrors(newFormErrors);
   }
 
-  return { formValues, formErrors, handleChange };
+  return { formValues, handleInputChange };
 }
 
 export default useForm;
