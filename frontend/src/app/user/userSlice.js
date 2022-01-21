@@ -8,7 +8,8 @@ const userSlice = createSlice({
   initialState: {
     currentUser: localStorage.getItem('currentUser') || null,
     token: localStorage.getItem('token') || null,
-    status: STATUS.IDLE
+    status: STATUS.IDLE,
+    errorMsg: null,
   },
   reducers: {
     logout: state => {
@@ -30,9 +31,11 @@ const userSlice = createSlice({
       })
       .addMatcher(isAnyOf(login.pending, signup.pending), (state, action) => {
         state.status = STATUS.LOADING;
+        state.errorMsg = null;
       })
       .addMatcher(isAnyOf(login.rejected, signup.rejected), (state, action) => {
         state.status = STATUS.ERROR;
+        state.errorMsg = action.error.message;
       })
   }
 })
@@ -52,6 +55,10 @@ const signup = createAsyncThunk('user/signup', async (requestBody) => {
 
 export const currentUserSelector = (state) => {
   return state.user.currentUser;
+}
+
+export const errorSelector = (state) => {
+  return state.user.errorMsg;
 }
 
 export const persistUserMiddleware = store => next => action => {

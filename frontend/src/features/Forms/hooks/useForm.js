@@ -10,8 +10,8 @@ const useForm = (validateForm) => {
     initialState[name] = '';
   }
 
-  const [formValues, setFormValues] = useState(initialState);
-  const [formErrors, setFormErrors] = useState(initialState);
+  const [formValues, setFormValues] = useState({});
+  const [formErrors, setFormErrors] = useState({});
 
 
   const handleChange = (e) => {

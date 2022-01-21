@@ -6,11 +6,13 @@
 }
 
 body:global {
-  background-color: var(--clr-gray-2);
+  color: var(--clr-gray-10);
+  background-color: var(--clr-gray-3);
 }
 
 :root:global {
-  --clr-gray-9: #303030;
+  --clr-gray-10: #1d1d1d;
+  --clr-gray-9: #2b2b2b;
   --clr-gray-8: #424242;
   --clr-gray-7: #616161;
   --clr-gray-6: #757575;

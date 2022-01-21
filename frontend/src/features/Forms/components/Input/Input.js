@@ -11,23 +11,12 @@ const Input = ({ name, type, label, onChange, value, errorMsg }) => {
   const handleBlur = () => {
     setDisplayError(true);
   }
+  
   console.log(errorMsg)
   return (
-/*     <TextField 
-      id={name} 
-      type={type} 
-      name={name} 
-      label={label} 
-      variant="filled" 
-      onChange={onChange} 
-      value={value}
-      error={displayError}
-      helperText={(displayError) ? errorMsg : ' '}
-      onBlur={handleBlur}
-    /> */
     <div className={styles.inputContainer}>
       <input
-        className={`${styles.input} ${styles.inputError}`}
+        className={`${styles.input} ${(displayError) ? styles.inputError : ''}`}
         name={name}
         aria-label={name} 
         type={type}
@@ -35,6 +24,7 @@ const Input = ({ name, type, label, onChange, value, errorMsg }) => {
         onChange={onChange}
         value={value}
         onBlur={handleBlur}
+        autoComplete='off'
       />
       <p className={styles.errorMsg}>{errorMsg}</p>
     </div>

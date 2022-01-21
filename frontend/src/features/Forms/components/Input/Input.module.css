@@ -7,6 +7,7 @@
   width: 100%;
   padding: 1rem;
   font-size: 1rem;
+  border: 1px solid transparent;
   border-radius: 7px;
   background-color: var(--clr-gray-3);
 }

@@ -5,7 +5,7 @@ const login = async (requestBody) => {
     const { data } = await axios.post('/auth/login', requestBody);
     return data;
   } catch (err) {
-    throw new Error(err);
+    throw new Error(err.response.data);
   }
 }
 
@@ -14,7 +14,7 @@ const signup = async (requestBody) => {
     await axios.post('/auth/register', requestBody);
     return;
   } catch (err) {
-    return new Error(err);
+    throw new Error(err.response.data);
   }
 }
 
