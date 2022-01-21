@@ -1,8 +1,8 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
-const inputErrorMessages = require('../inputValidators/inputErrorMessages')
-const {registerValidator, changePasswordValidator} = require('../inputValidators/authValidator');
-const RequestError = require('../errorTypes/RequestError');
+const inputErrorMessages = require('./utils/inputValidators/inputErrorMessages')
+const {registerValidator, changePasswordValidator} = require('./utils/inputValidators/authValidator');
+const RequestError = require('./utils/errorTypes/RequestError');
 const User = require('../models/userSchema');
 const Portfolio = require('../models/portfolioSchema');
 

@@ -16,16 +16,13 @@ app.use('/api', ApiRouter);
 
 /* Si no entro a ninguna ruta, va al manejo de errores. */
 
-app.get('/', (req, res) => {
-  return res.status(200).send('asdasddsa');
-})
-
 app.use((err, req, res, next) => {
   if (!err || err.status == 404) {
-    return res.status(404).send('Page not found.')
+    return res.status(404).send('Endpoint not found.')
   }
 
   if (err.status) {
+    console.log(err.message)
     return res.status(err.status).send(err.message)
   }
 

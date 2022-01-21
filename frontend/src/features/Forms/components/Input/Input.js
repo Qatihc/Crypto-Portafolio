@@ -29,7 +29,6 @@ const Input = ({ name, type, label, onChange, value, error, forceDisplayError })
         onChange={onChange}
         value={value}
         onBlur={handleBlur}
-        autoComplete='off'
       />
       <p className={styles.error}>{(displayError) ? error : ''}</p>
     </div>

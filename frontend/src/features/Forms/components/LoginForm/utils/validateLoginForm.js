@@ -2,10 +2,11 @@
 
 const validateLoginForm = {
   username: ({ username }) => {
-    if (username !== 'test') return 'username must be test'
+    if (!username) return 'Username must not be empty'
     return null;
   },
   password: ({ password }) => {
+    if (!password) return 'Password must not be empty'
     return null
   }, 
 }

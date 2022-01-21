@@ -1,5 +1,5 @@
 const User = require('../models/userSchema');
-const {changeUsernameValidator} = require('../inputValidators/userValidator');
+const {changeUsernameValidator} = require('./utils/inputValidators/userValidator');
 
 const changeUsername = async (req, res, next) => {
   const err = changeUsernameValidator(req.body);

@@ -2,8 +2,8 @@ const Portfolio = require('../models/portfolioSchema');
 const Coin = require('../models/coinSchema');
 const Transaction = require('../models/transactionSchema')
 
-const inputErrorMessages = require('../inputValidators/inputErrorMessages');
-const RequestError = require('../errorTypes/RequestError')
+const inputErrorMessages = require('./utils/inputValidators/inputErrorMessages');
+const RequestError = require('./utils/errorTypes/RequestError')
 
 const retrieveUserPortfolio = async (req, res) => {
   const { portfolio } = res.locals.user;
