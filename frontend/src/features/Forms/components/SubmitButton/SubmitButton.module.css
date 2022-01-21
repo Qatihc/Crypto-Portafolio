@@ -12,3 +12,7 @@
 .submitButton:hover, .submitButton:focus {
   background-color: var(--clr-accent-10);
 }
+
+.submitButton:disabled {
+  background-color: var(--clr-gray-7);
+}

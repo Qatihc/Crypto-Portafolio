@@ -1,9 +1,9 @@
 import React from 'react';
 import styles from './SubmitButton.module.css';
 
-const SubmitButton = ({ onClick, children }) => {
+const SubmitButton = ({ handleSubmit, disabled, children }) => {
   return (
-    <button className={styles.submitButton} onClick={onClick}>{children}</button>
+    <button className={styles.submitButton} onClick={handleSubmit} disabled={disabled}>{children}</button>
   )
 }
 
