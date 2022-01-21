@@ -64,7 +64,6 @@ export const persistUserMiddleware = store => next => action => {
     localStorage.removeItem('currentUser');
     localStorage.removeItem('token');
   }
-
   return next(action);
 }
 

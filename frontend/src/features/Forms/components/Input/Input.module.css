@@ -1,0 +1,26 @@
+.inputContainer {
+  margin: 0 2rem;
+}
+
+.input {
+  border: none;
+  width: 100%;
+  padding: 1rem;
+  font-size: 1rem;
+  border-radius: 7px;
+  background-color: var(--clr-gray-3);
+}
+
+.inputError {
+  border: 1px solid var(--clr-danger-2);
+}
+
+.errorMsg {
+  color: var(--clr-danger-2);
+}
+
+/* Si el mensaje de error esta vacio, muestro un espacio 
+para reservar el lugar que ocuparia el mensaje  */
+.errorMsg:empty::before {
+  content: "\A0";
+}
