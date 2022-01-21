@@ -52,6 +52,7 @@ const fetchSupportedCoinsList = async (app) => {
     return response.data;
   } catch(err) {
     console.log('Error en fetchCoinDataFromCoingecko ', err)
+    throw new Error(err);
   }
 }
 
@@ -66,7 +67,7 @@ const fetchCoinPrices = async (coinGeckoIds) => {
         return retryCount * 5000
       }
     });
-  /* La longitud maxima que puede tener una URL para que sea valida en esta api es aprox 6000 bytes */
+  /* La longitud maxima que puede tener una URL para que sea valida es aprox 6000 bytes */
     const baseUrl = 'https://api.coingecko.com/api/v3/simple/price?vs_currencies=usd&ids=';
     const MAX_PARAMS_LENGTH = 5500 - baseUrl.length;
 
@@ -77,8 +78,6 @@ const fetchCoinPrices = async (coinGeckoIds) => {
       if (params.at(-1).length + coin.length >= MAX_PARAMS_LENGTH) params.push('')
       params[params.length - 1] += coin + ',';
     }
-
-    // console.log(params.map(p => p.length))
   
     const requests = []
     for (const ids of params) {
@@ -94,10 +93,11 @@ const fetchCoinPrices = async (coinGeckoIds) => {
     const reducer = (prev, current) => Object.assign(prev, current)
     return responses.reduce(reducer, {})
   } catch(err) {
-    console.log('Error en fetchCoinPrices ', err)
+    console.log('Error en fetchCoinPrices ', err);
+    throw new Error(err);
   }
-
-  // console.log(response.data)
 }
+
+
 
 module.exports = {fetchSupportedCoinsList, fetchCoinPrices}

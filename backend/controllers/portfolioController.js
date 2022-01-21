@@ -9,9 +9,14 @@ const retrieveUserPortfolio = async (req, res) => {
   const { portfolio } = res.locals.user;
   const coins = await Coin
     .find({ portfolio }, 'amount symbol')
-/*     .populate('latestTransactions'); */
 
-  res.send(coins);
+  const coinsWithPrice = coins.map((coin) => {
+    const price = req.app.locals.getCoinPriceFromSymbol(coin.symbol);
+    /* Los objetos devueltos por una query de mongoose son inmutables, necesito aplicar el metodo toObject para poder modificarlo. */
+    return Object.assign(coin.toObject(), { price })
+  })
+
+  res.send(coinsWithPrice);
 }
 
 const retrieveTransactions = async (req, res, next) => {
@@ -44,12 +49,18 @@ const retrievePortfolioReturns = (req, res) => {
 }
 
 const createTransaction = async (req, res, next) => {
-  const { amount, price } = req.body;
-  let { date, symbol } = req.body;
+  let {
+    symbol,
+    amount,
+    price,
+    date = Date.now() 
+  } = req.body;
+  amount = parseFloat(amount);
+  symbol = symbol.toUpperCase();
   const { portfolio } = res.locals.user;
 
-  symbol = symbol.toUpperCase();
-  if (req.app.locals.symbolToCoinGeckoId[symbol] === undefined) return res.send('invalid coin');
+  if (!req.app.locals.isSupportedCoin(symbol)) return res.send('invalid coin');
+  if (!amount) return res.send('Amount must not be 0');
 
   const coinWithSameSymbolAsTransaction = await Coin.findOne({ portfolio, symbol });
   if (!coinWithSameSymbolAsTransaction) {
@@ -57,7 +68,6 @@ const createTransaction = async (req, res, next) => {
   }
 
   const coin = await Coin.findOne({ symbol, portfolio });
-  date = (date === undefined) ? Date.now() : date;
   transaction = new Transaction({ symbol, amount, price, date, coin: coin.id, portfolio })
 
   coin.amount += transaction.amount;

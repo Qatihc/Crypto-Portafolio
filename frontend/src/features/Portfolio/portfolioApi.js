@@ -13,5 +13,5 @@ const fetchPortfolio = async () => {
 }
 
 export const portfolioApi = {
-  fetchPortfolio 
+  fetchPortfolio,
 }
