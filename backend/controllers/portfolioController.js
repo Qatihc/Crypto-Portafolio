@@ -5,11 +5,38 @@ const Transaction = require('../models/transactionSchema')
 const inputErrorMessages = require('../inputValidators/inputErrorMessages');
 const RequestError = require('../errorTypes/RequestError')
 
-const {MAX_LATEST_TRANSACTIONS} = require('../constants')
+const retrieveUserPortfolio = async (req, res) => {
+  const { portfolio } = res.locals.user;
+  const coins = await Coin
+    .find({ portfolio }, 'amount symbol')
+/*     .populate('latestTransactions'); */
 
+  res.send(coins);
+}
 
-const retrieveUserPortfolio = (req, res) => {
-  res.send(res.locals.user.username);
+const retrieveTransactions = async (req, res, next) => {
+  const { symbol, offset = 0} = req.query;
+  const { portfolio } = res.locals.user;
+  const match = (symbol) ?
+    ({ symbol, portfolio }) :
+    ({ portfolio });
+
+  const transactions = await Transaction.aggregate([
+    { 
+      $match: match 
+    },
+    {
+      $sort: { date: -1 },
+    },
+    {
+      $skip: Number(offset),
+    },
+    {
+      $limit: 20,
+    },
+  ])
+
+  return res.send(transactions);
 }
 
 const retrievePortfolioReturns = (req, res) => {
@@ -24,34 +51,30 @@ const createTransaction = async (req, res, next) => {
   symbol = symbol.toUpperCase();
   if (req.app.locals.symbolToCoinGeckoId[symbol] === undefined) return res.send('invalid coin');
 
-  const coinWithSameSymbolAsTransaction = await Coin.findOne({portfolio, symbol});
+  const coinWithSameSymbolAsTransaction = await Coin.findOne({ portfolio, symbol });
   if (!coinWithSameSymbolAsTransaction) {
-    await Coin.create({symbol, portfolio});
+    await Coin.create({ symbol, portfolio });
   }
 
-  const coin = await Coin.findOne({symbol, portfolio});
+  const coin = await Coin.findOne({ symbol, portfolio });
   date = (date === undefined) ? Date.now() : date;
-  transaction = new Transaction({ symbol, amount, price, date, coin: coin.id })
+  transaction = new Transaction({ symbol, amount, price, date, coin: coin.id, portfolio })
 
   coin.amount += transaction.amount;
-
-  /* TODO: Chequear si es realmente una de las ultimas transacciones (comparar fechas) */
-  if (coin.latestTransactions.length > MAX_LATEST_TRANSACTIONS) coin.latestTransactions.pop()
-  coin.latestTransactions.unshift(transaction.id);
 
   await coin.save();
   await transaction.save();
 
-/*   await Coin.updateOne(
-    { _id: transaction.coin },
-    {
-      $push: {
-        latestTransactions: {
-          $each: transaction.id,
-          $sort: {date: -1},
-          $slice: MAX_LATEST_TRANSACTIONS
-        }
-    }) */
+  /*   await Coin.updateOne(
+      { _id: transaction.coin },
+      {
+        $push: {
+          latestTransactions: {
+            $each: transaction.id,
+            $sort: {date: -1},
+            $slice: MAX_LATEST_TRANSACTIONS
+          }
+      }) */
 
   return res.send(transaction.id)
 }
@@ -61,7 +84,7 @@ const deleteManyTransaction = async (req, res, next) => {
   if (!Array.isArray(transactionIds)) transactionIds = [transactionIds];
 
   try {
-    const transactionDelete = await Transaction.deleteMany({_id: {$in: transactionIds}})
+    const transactionDelete = await Transaction.deleteMany({ _id: { $in: transactionIds } })
     console.log(transactionDelete.deletedCount)
     /* TODO: CHEQUEAR SI REALMENTE BORRO ALGO! */
     return res.send('ok!')
@@ -72,7 +95,7 @@ const deleteManyTransaction = async (req, res, next) => {
 }
 
 const updateTransaction = async (req, res, next) => {
-  const {transactionId} = req.body;
+  const { transactionId } = req.body;
   const updatableFields = ['amount', 'price'];
 
   const update = {};
@@ -82,14 +105,14 @@ const updateTransaction = async (req, res, next) => {
     }
   }
 
-  await Transaction.findOneAndUpdate({_id: transactionId}, update, {useFindAndModify: false});
+  await Transaction.findOneAndUpdate({ _id: transactionId }, update, { useFindAndModify: false });
   res.send('ready go');
 }
 
 const retrievePortfolioCoinsPrice = async (req, res, next) => {
   try {
-    const {portfolio} = res.locals.user;
-    const coins = await Coin.find({portfolio, amount: {$ne: 0}}, 'amount symbol');
+    const { portfolio } = res.locals.user;
+    const coins = await Coin.find({ portfolio, amount: { $ne: 0 } }, 'amount symbol');
 
     const coinsUsdPrice = {};
     for (coin of coins) {
@@ -111,5 +134,6 @@ module.exports = {
   createTransaction,
   deleteManyTransaction,
   updateTransaction,
-  retrievePortfolioCoinsPrice
+  retrievePortfolioCoinsPrice,
+  retrieveTransactions
 };

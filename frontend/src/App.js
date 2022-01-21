@@ -1,11 +1,9 @@
 import React from 'react';
-import { Routes, Route, Link, BrowserRouter } from "react-router-dom";
-
+import { Routes, Route, Navigate, BrowserRouter } from "react-router-dom";
 import { LandingPage } from './pages/LandingPage';
-import { LoginPage } from './pages/LoginPage';
-import { SignUpPage } from './pages/SignUpPage';
 import { PortfolioPage } from './pages/PortfolioPage';
-
+import { LoginForm } from './features/Forms';
+import { SignUpForm } from './features/Forms';
 import { Provider } from 'react-redux';
 import styles from './App.modules.css'
 import store from './app/store';
@@ -17,9 +15,9 @@ const App = () => {
       <BrowserRouter>
       <main className={styles.mainGrid}>
         <Routes>
-          <Route path="/" element={<LandingPage/>} />
-          <Route path="login" element={<LoginPage />}/>
-          <Route path="signup" element={<SignUpPage />}/>
+          <Route path="/" element={<Navigate to="signup"/>} />
+          <Route path="signup" element={<LandingPage form={<SignUpForm/>}/>} />
+          <Route path="login" element={<LandingPage form={<LoginForm/>}/>}/>
           <Route path="portfolio" element={<PortfolioPage />}/>
         </Routes>
       </main>

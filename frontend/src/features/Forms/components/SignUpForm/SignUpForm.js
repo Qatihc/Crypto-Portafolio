@@ -1,10 +1,18 @@
 import React from "react";
 import Form from "../Form/Form";
 import Input from "../Input/Input";
+
 import useForm from "../../hooks/useForm";
-import validateSignUpForm from "./utils/validateSignUpForm";
 import { useDispatch } from "react-redux";
+
+import validateSignUpForm from "./utils/validateSignUpForm";
 import { signup } from "~/src/app/user/userSlice";
+
+import styles from './SignUpForm.module.css'
+import FormContainer from "../FormContainer/FormContainer";
+import SubmitButton from "../SubmitButton/SubmitButton";
+import { Link } from "react-router-dom";
+
 
 const SignUpForm = () => {
   const { formValues, formErrors, handleChange } = useForm(validateSignUpForm);
@@ -15,14 +23,20 @@ const SignUpForm = () => {
   }
 
   return (
-    <>
-      <Form onSubmit={handleSubmit}>
-        <Input name="username" label="Username" onChange={handleChange} value={formValues.username} errorMsg={formErrors.username}/>
-        <Input name="password" type="password" label="Password" onChange={handleChange} value={formValues.password} errorMsg={formErrors.password}/>
-        <Input name="confirmPassword" type="password" label="Confirm password" onChange={handleChange} value={formValues.confirmPassword} errorMsg={formErrors.confirmPassword}/>
-        <input type="submit" value="Sign up"></input>
+    <FormContainer>
+      <h2 className={styles.formTitle}>Crea tu portfolio.</h2>
+      <p className={styles.formSubtitle}>Ya tenes una cuenta? <Link to="/login">Logueate</Link></p>
+      <Form 
+        onInputChange={handleChange} 
+        formValues={formValues} 
+        formErrors={formErrors}
+      >
+        <Input name="username" label="Username" />
+        <Input name="password" label="Password" type="password"/>
+        <Input name="confirmPassword" type="password" label="Confirm password"/>
+        <SubmitButton onClick={handleSubmit}>Sign up</SubmitButton>
       </Form>
-    </>
+    </FormContainer>
   )
 }
 

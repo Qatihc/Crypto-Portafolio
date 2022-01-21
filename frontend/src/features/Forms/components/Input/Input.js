@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { TextField } from '@mui/material';
+import styles from './Input.module.css';
 
 const Input = ({ name, type, label, onChange, value, errorMsg }) => {
   const [displayError, setDisplayError] = useState(false);
@@ -11,21 +11,33 @@ const Input = ({ name, type, label, onChange, value, errorMsg }) => {
   const handleBlur = () => {
     setDisplayError(true);
   }
-
+  console.log(errorMsg)
   return (
-    <TextField 
+/*     <TextField 
       id={name} 
       type={type} 
       name={name} 
       label={label} 
-      variant="outlined" 
+      variant="filled" 
       onChange={onChange} 
       value={value}
       error={displayError}
-      /* Si no estoy mostrando un mensaje de ayuda, y paso a mostrarlo se mueve el input, para evitar esto muestro siempre un espacio. (https://mui.com/components/text-fields/#helper-text) */
       helperText={(displayError) ? errorMsg : ' '}
       onBlur={handleBlur}
-    />
+    /> */
+    <div className={styles.inputContainer}>
+      <input
+        className={`${styles.input} ${styles.inputError}`}
+        name={name}
+        aria-label={name} 
+        type={type}
+        placeholder={label}
+        onChange={onChange}
+        value={value}
+        onBlur={handleBlur}
+      />
+      <p className={styles.errorMsg}>{errorMsg}</p>
+    </div>
   )
 }
   

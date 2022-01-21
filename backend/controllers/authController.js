@@ -56,7 +56,7 @@ const registerUser = async (req, res, next) => {
 const changePassword = async (req, res, next) => {
   const err = changePasswordValidator(req.body);
   if (err) return next(err);
-
+  /* CHEQUEAR ESTO QUE CUALQUIER USER PUEDE CAMBIAR LA CONTRASENIA DE OTRO!!!!!!!! WTF */
   const {username, password, newPassword} = req.body;
   try {
     const user = await User.findOne({username_lower: username.toLowerCase()});
