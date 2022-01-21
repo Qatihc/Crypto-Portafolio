@@ -16,6 +16,9 @@ const userSlice = createSlice({
       state.currentUser = null;
       state.token = null;
       return state;
+    },
+    resetError: state => {
+      state.errorMsg = null;
     }
   },
   extraReducers(builder) {
@@ -74,6 +77,6 @@ export const persistUserMiddleware = store => next => action => {
   return next(action);
 }
 
-export const { logout } = userSlice.actions;
+export const { logout, resetError } = userSlice.actions;
 export { signup, login }
 export default userSlice.reducer;
