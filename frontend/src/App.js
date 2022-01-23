@@ -15,7 +15,7 @@ const App = () => {
       <BrowserRouter>
       <main className={styles.mainGrid}>
         <Routes>
-          <Route path="/" element={<Navigate to="/signup"/>} />
+          <Route path="/" element={<Navigate to="/login"/>} />
           <Route path="/signup" element={<LandingPage form={<SignUpForm/>}/>} />
           <Route path="/login" element={<LandingPage form={<LoginForm/>}/>}/>
           <Route path="/portfolio" element={<PortfolioPage />}/>
