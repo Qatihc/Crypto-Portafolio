@@ -1,9 +1,10 @@
 import React, { useMemo } from 'react';
-import { useSelector } from 'react-redux';
-import { selectAllCoins } from '../../Portfolio/portfolioSlice';
-import Table from './Table';
+import { useSelector, useDispatch } from 'react-redux';
+import { selectAllCoins, selectCoinById, fetchCoinTransactions } from '../../Portfolio/portfolioSlice';
+import TableInstance from './TableInstance';
 
 const CoinsTable = () => {
+  const dispatch = useDispatch();
   const coins = useSelector(selectAllCoins)
   const columns = useMemo(() => [
     {
@@ -26,8 +27,9 @@ const CoinsTable = () => {
   
   const data = useMemo(() => {
     return coins.map((coin) => {
-      const { symbol, amount, price } = coin;
+      const { symbol, amount, price, _id } = coin;
       return {
+        id: _id,
         symbol,
         amount,
         price,
@@ -36,16 +38,7 @@ const CoinsTable = () => {
     })
   }, [coins])
 
-  const getExpandedRow = (row) => {
-    const { symbol } = row.values;
-    return (
-      <tr>
-        <td>{symbol}</td>
-      </tr>
-    )
-  }
-
-  return <Table columns={columns} data={data} getExpandedRow={getExpandedRow}/>
+  return <TableInstance columns={columns} data={data}/>
 }
 
 export default CoinsTable;

@@ -1,17 +1,14 @@
 import React from 'react';
-import { useTable, useExpanded } from "react-table";
 
-const Table = ({ columns, data, getExpandedRow }) => {
-  const tableInstance = useTable({ columns, data }, useExpanded);
-  const {
-    getTableProps,
-    getTableBodyProps,
-    headerGroups,
-    rows,
-    prepareRow,
-    toggleRowExpanded,
-    state: { expanded }
-  } = tableInstance
+const TableLayout = ({
+  getTableProps,
+  getTableBodyProps,
+  headerGroups,
+  rows,
+  prepareRow,
+  toggleRowExpanded,
+  renderRowSubcomponent
+}) => {
 
   return (
    <table {...getTableProps()}>
@@ -31,7 +28,7 @@ const Table = ({ columns, data, getExpandedRow }) => {
          prepareRow(row)
          return (
            <>
-           <tr {...row.getRowProps()} onClick={() => {toggleRowExpanded(row.id)}}>
+           <tr {...row.getRowProps()} onClick={() => toggleRowExpanded(row.id)}>
              {row.cells.map(cell => {
                return (
                  <td {...cell.getCellProps()}>
@@ -40,7 +37,7 @@ const Table = ({ columns, data, getExpandedRow }) => {
                )
              })}
            </tr>
-           {row.isExpanded ? getExpandedRow(row) : null}
+           {row.isExpanded ? renderRowSubcomponent(row) : null}
            </>
          )
        })}
@@ -49,4 +46,4 @@ const Table = ({ columns, data, getExpandedRow }) => {
   )
 }
 
-export default Table;
+export default TableLayout;
