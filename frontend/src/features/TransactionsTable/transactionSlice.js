@@ -6,6 +6,10 @@ const selectTransactionStatus = createSelector(
   (state) => state.transaction.status,
   (status) => status
 )
+const selectPageSize = createSelector(
+  (state) => state.transaction.pagination.pageSize,
+  (pageSize) => pageSize
+)
 
 /* const selectCurrentPageTransactions = createSelector(
   (state) => state.transaction.page,
@@ -36,46 +40,65 @@ const transactionSlice = createSlice({
   reducers: {
   },
   extraReducers(builder) {
-    fetchTransactionsReducer(builder)
+    initializePagesReducer(builder)
+    goToPageReducer(builder)
   }
 })
 
-const fetchTransactions = createAsyncThunk('transaction/fetchTransactions', async ({ symbol = null, offset = 0}, thunkAPI) => {
-/*   const coin = selectCoinById(thunkAPI.getState(), id); */
-  const data = await transactionApi.fetchTransactions({ /* symbol: null, offset */});
-  return data;
+const goToPage = createAsyncThunk('transaction/goToPage', async (page, thunkAPI) => {
+  /* If (paginaExiste) noHagoFetch */
+  const pageSize = selectPageSize(thunkAPI.getState());
+  const offset = (page - 1) * pageSize;
+  const data = await transactionApi.fetchTransactions({ offset });
+  return { ...data, page };
 })
 
-const fetchTransactionsReducer = (builder) =>
+const goToPageReducer = (builder) =>
   builder
-    .addCase(fetchTransactions.pending, (state, action) => {
+    .addCase(goToPage.pending, (state, action) => {
       state.status = STATUS.LOADING;
     })
-    .addCase(fetchTransactions.fulfilled, (state, action) => {
+    .addCase(goToPage.fulfilled, (state, action) => {
+      const { transactions, page } = action.payload;
       state.status = STATUS.SUCCESS;
-      const { transactions, totalTransactions } = action.payload;
-      state.totalEntities = totalTransactions;
+      state.pagination.currentPage = page;
       transactions.forEach((transaction) => {
         const id = transaction._id;
         state.ids.push(id);
+        state.pagination.pages[page].ids.push(id);
         state.entities[id] = transaction;
       });
-      /* Sabiendo la cantidad total de transacciones, inicializo todas las paginas. */
+      state.pagination.pages[page].status = STATUS.SUCCESS;
+    })
+    .addCase(goToPage.rejected, (state, action) => {
+      state.status = STATUS.ERROR;
+    })
+
+const initializePages = createAsyncThunk('transaction/initializePages', async (_, thunkAPI) => {
+  const data = await transactionApi.fetchTotalTransactions();
+  return data;
+})
+
+const initializePagesReducer = (builder) => 
+  builder
+    .addCase(initializePages.pending, (state, action) => {
+      state.status = STATUS.LOADING;
+    })
+    .addCase(initializePages.fulfilled, (state, action) => {
+      const { totalTransactions } = action.payload;
+      state.totalEntities = totalTransactions;
       const lastPage = Math.ceil(state.totalEntities / state.pagination.pageSize);
       for (let pageNumber = 1; pageNumber <= lastPage; pageNumber++) {
         state.pagination.pages[pageNumber] = {
-          status: 'idle',
+          status: STATUS.IDLE,
           ids: [],
         }
       }
     })
-    .addCase(fetchTransactions.rejected, (state, action) => {
+    .addCase(initializePages.rejected, (state, action) => {
       state.status = STATUS.ERROR;
     })
 
-const goToPage = createAsyncThunk('transaction/goToPage', async ({}, thunkAPI) => {
-})
-
 export { selectTransactionStatus, /* selectCurrentPageTransactions */ };
-export { fetchTransactions };
+export { initializePages, goToPage };
 export default transactionSlice.reducer;

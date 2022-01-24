@@ -7,7 +7,8 @@ const {
   deleteManyTransaction,
   updateTransaction,
   retrievePortfolioCoinsPrice,
-  retrieveTransactions
+  retrieveTransactions,
+  retrieveTotalTransactions
 } = require('../controllers/portfolioController');
 
 portfolioRouter.post('/createTransaction', requireAuth, createTransaction);
@@ -17,6 +18,7 @@ portfolioRouter.post('/updateTransaction', requireAuth, updateTransaction);
 portfolioRouter.get('/returns', requireAuth, retrievePortfolioReturns);
 portfolioRouter.get('/', requireAuth, retrieveUserPortfolio);
 portfolioRouter.get('/transaction', requireAuth, retrieveTransactions);
+portfolioRouter.get('/totalTransactions', requireAuth, retrieveTotalTransactions);
 portfolioRouter.get('/coinsPrice', requireAuth, retrievePortfolioCoinsPrice);
 
 portfolioRouter.get('/test', (req, res, next) => {res.send(req.app.locals.coinPrices)})

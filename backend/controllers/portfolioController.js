@@ -19,9 +19,29 @@ const retrieveUserPortfolio = async (req, res) => {
   res.send(coinsWithPrice);
 }
 
+const retrieveTotalTransactions = async (req, res, next) => {
+  const { portfolio } = res.locals.user;
+  try {
+    const totalTransactions = await Transaction.aggregate([
+      {
+        $match: { portfolio }
+      },
+      {
+        $count: "totalTransactions"
+      }
+    ])
+
+    /* Aggregate devuelve el resultado como un array de un solo elemento */
+    return res.send(totalTransactions[0]);
+  } catch (err) {
+    return next(err);
+  }
+}
+
 const retrieveTransactions = async (req, res, next) => {
-  console.log(req.query)
   const { symbol, offset = 0} = req.query;
+  if (offset < 0) return res.status(401).send('Invalid offset');
+  
   const { portfolio } = res.locals.user;
   const match = (symbol) ?
     ({ symbol, portfolio }) :
@@ -160,5 +180,6 @@ module.exports = {
   deleteManyTransaction,
   updateTransaction,
   retrievePortfolioCoinsPrice,
-  retrieveTransactions
+  retrieveTransactions,
+  retrieveTotalTransactions
 };
