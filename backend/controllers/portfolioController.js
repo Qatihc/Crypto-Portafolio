@@ -27,7 +27,7 @@ const retrieveTransactions = async (req, res, next) => {
     ({ symbol, portfolio }) :
     ({ portfolio });
 
-  let transactionsData = await Transaction.aggregate([
+  const transactionsData = await Transaction.aggregate([
     { 
       $match: match 
     },
@@ -55,7 +55,8 @@ const retrieveTransactions = async (req, res, next) => {
     }
   ])
 
-  return res.send(transactionsData);
+  /* El aggregate devuelve el resultado como un array de un solo elemento */
+  return res.send(transactionsData[0]);
 }
 
 const retrievePortfolioReturns = (req, res) => {

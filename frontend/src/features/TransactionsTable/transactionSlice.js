@@ -53,13 +53,21 @@ const fetchTransactionsReducer = (builder) =>
     })
     .addCase(fetchTransactions.fulfilled, (state, action) => {
       state.status = STATUS.SUCCESS;
-      const transactions = action.payload;
+      const { transactions, totalTransactions } = action.payload;
+      state.totalEntities = totalTransactions;
       transactions.forEach((transaction) => {
         const id = transaction._id;
         state.ids.push(id);
         state.entities[id] = transaction;
       });
-      
+      /* Sabiendo la cantidad total de transacciones, inicializo todas las paginas. */
+      const lastPage = Math.ceil(state.totalEntities / state.pagination.pageSize);
+      for (let pageNumber = 1; pageNumber <= lastPage; pageNumber++) {
+        state.pagination.pages[pageNumber] = {
+          status: 'idle',
+          ids: [],
+        }
+      }
     })
     .addCase(fetchTransactions.rejected, (state, action) => {
       state.status = STATUS.ERROR;
