@@ -1,30 +1,20 @@
-import React, { useEffect } from 'react';
-import { fetchPortfolio, selectPortfolioStatus } from '../../features/Portfolio/portfolioSlice';
-import { useSelector, useDispatch } from 'react-redux';
-import { STATUS } from '~/src/app/constants';
+import React from 'react';
+import { useSelector } from 'react-redux';
 import { currentUserSelector } from '../../app/user/userSlice';
 import { Navigate } from 'react-router-dom';
-import { CoinsTable } from '../../features/PortfolioCoins';
+import { CoinsTable } from '../../features/CoinsTable';
+import { TransactionsTable } from '../../features/TransactionsTable';
 
 
 const PortfolioPage = () => {
   const currentUser = useSelector(currentUserSelector);
 
-  const dispatch = useDispatch()
-  useEffect(() => {
-    dispatch(fetchPortfolio())
-  }, [])
-
-  const portfolioStatus = useSelector(selectPortfolioStatus);
-
   if (!currentUser) return <Navigate to="/login" />
-  if (portfolioStatus == STATUS.LOADING) {
-    return 'Cargando...'
-  }
 
   return (
     <>
       <CoinsTable/>
+      <TransactionsTable />
     </>
   )
 }

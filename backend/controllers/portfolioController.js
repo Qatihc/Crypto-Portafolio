@@ -20,28 +20,42 @@ const retrieveUserPortfolio = async (req, res) => {
 }
 
 const retrieveTransactions = async (req, res, next) => {
+  console.log(req.query)
   const { symbol, offset = 0} = req.query;
   const { portfolio } = res.locals.user;
   const match = (symbol) ?
     ({ symbol, portfolio }) :
     ({ portfolio });
 
-  const transactions = await Transaction.aggregate([
+  let transactionsData = await Transaction.aggregate([
     { 
       $match: match 
     },
     {
       $sort: { date: -1 },
     },
-    {
-      $skip: Number(offset),
+    { $facet: 
+      {
+        totalTransactions: [{$count: "totalTransactions"}],
+        transactions: [
+          {
+            $skip: Number(offset)
+          },
+          {
+            $limit: 20,
+          }
+        ]
+      }
     },
     {
-      $limit: 20,
-    },
+      $project: {
+        transactions: "$transactions",
+        totalTransactions: { "$arrayElemAt": [ "$totalTransactions.totalTransactions", 0 ]}
+      }
+    }
   ])
 
-  return res.send(transactions);
+  return res.send(transactionsData);
 }
 
 const retrievePortfolioReturns = (req, res) => {

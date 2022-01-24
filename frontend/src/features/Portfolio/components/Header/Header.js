@@ -9,6 +9,7 @@ const Header = () => {
   const handleLogout = () => {
     dispatch(logout());
   }
+  
   return (
     <header className={styles.header}>
       <button className={styles.logout} onClick={handleLogout}>logout</button>
