@@ -1,5 +1,4 @@
 import React, { useEffect, useState, useMemo } from 'react';
-import { usePagination, useTable } from 'react-table';
 import { useGetTransactionsCountQuery, useGetTransactionsQuery } from '../transactionSlice';
 import formatDate from '../utils/formatDate';
 import TableLayout from './TableLayout';
