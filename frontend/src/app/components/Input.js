@@ -1,7 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import styles from './Input.module.css';
 
-const Input = ({ name, type, label, onChange, value, error, forceDisplayError }) => {
+const Input = ({ 
+  name,
+  type,
+  label,
+  onChange,
+  value,
+  error,
+  forceDisplayError,
+  classNames
+}) => {
   const [displayError, setDisplayError] = useState(false);
 
   useEffect(() => {
@@ -19,9 +27,9 @@ const Input = ({ name, type, label, onChange, value, error, forceDisplayError })
   }
   
   return (
-    <div className={styles.inputContainer}>
+    <div>
       <input
-        className={`${styles.input} ${(displayError) ? styles.inputError : ''}`}
+        className={`${classNames.input} ${(displayError) ? classNames.inputError : ''}`}
         name={name}
         type={type}
         aria-label={label}
@@ -30,7 +38,7 @@ const Input = ({ name, type, label, onChange, value, error, forceDisplayError })
         value={value}
         onBlur={handleBlur}
       />
-      <p className={styles.error}>{(displayError) ? error : ''}</p>
+      <p className={classNames.error}>{(displayError) ? error : ''}</p>
     </div>
   )
 }

@@ -16,7 +16,7 @@ const userSlice = createSlice({
       state.token = null;
       return state;
     },
-    resetError: state => {
+    resetUserError: state => {
       state.errorMsg = null;
     }
   },
@@ -55,11 +55,11 @@ const signup = createAsyncThunk('user/signup', async (requestBody) => {
   return;
 })
 
-export const currentUserSelector = (state) => {
+export const selectCurrentUser = (state) => {
   return state.user.currentUser;
 }
 
-export const errorSelector = (state) => {
+export const selectUserError = (state) => {
   return state.user.errorMsg;
 }
 
@@ -76,6 +76,6 @@ export const persistUserMiddleware = store => next => action => {
   return next(action);
 }
 
-export const { logout, resetError } = userSlice.actions;
+export const { logout, resetUserError } = userSlice.actions;
 export { signup, login }
 export default userSlice.reducer;

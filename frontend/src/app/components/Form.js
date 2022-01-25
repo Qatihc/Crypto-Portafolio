@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react'
-import useForm from '../../hooks/useForm'
-import useFormValidator from '../../hooks/useFormValidator'
-import Input from '../Input/Input'
-import SubmitButton from '../SubmitButton/SubmitButton'
-import styles from './Form.module.css'
+import useForm from '../hooks/useForm'
+import useFormValidator from '../hooks/useFormValidator'
 
-const Form = ({ children, formValidator, onSubmit, ...props }) => {
+import Input from './Input'
+import SubmitButton from './SubmitButton'
+
+const Form = ({ children, formValidator, onSubmit, className }) => {
   const [disableSubmit, setDisableSubmit] = useState(false);
 
   const inputNames = React.Children.toArray(children)
@@ -48,7 +48,7 @@ const Form = ({ children, formValidator, onSubmit, ...props }) => {
   }
 
   return (
-    <form className={styles.form} {...props}>
+    <form className={className}>
       {React.Children.map(children, (child) => {
         if (child.type === Input) return transformInputChild(child);
         if (child.type === SubmitButton) return transformSubmitButtonChild(child);

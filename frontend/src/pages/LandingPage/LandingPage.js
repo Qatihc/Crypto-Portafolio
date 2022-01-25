@@ -2,13 +2,13 @@ import React from 'react';
 import { Navigate } from "react-router-dom";
 import styles from './LandingPage.module.css';
 
-import { useSelector, useDispatch } from 'react-redux';
-import { currentUserSelector, logout } from '../../app/user/userSlice';
+import { useSelector } from 'react-redux';
+import { selectCurrentUser } from '../../app/';
 
 
 
 const LandingPage = ({ form }) => {
-  const currentUser = useSelector(currentUserSelector);
+  const currentUser = useSelector(selectCurrentUser);
   if (currentUser) return <Navigate to="/portfolio" />
   return (
     <div className={styles.pageContainer}>

@@ -2,8 +2,8 @@ import React from 'react';
 import { Routes, Route, Navigate, BrowserRouter } from "react-router-dom";
 import { LandingPage } from './pages/LandingPage';
 import { PortfolioPage } from './pages/PortfolioPage';
-import { LoginForm } from './features/Forms';
-import { SignUpForm } from './features/Forms';
+import { LoginForm } from './features/AuthForms';
+import { SignUpForm } from './features/AuthForms';
 import { Provider } from 'react-redux';
 import styles from './App.modules.css'
 import store from './app/store';
