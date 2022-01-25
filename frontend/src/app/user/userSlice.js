@@ -1,5 +1,4 @@
 import { createSlice, createAsyncThunk, isAnyOf } from "@reduxjs/toolkit";
-import axios from "../axiosClient";
 import userApi from "./userApi";
 import { STATUS } from "../constants";
 
