@@ -1,14 +1,15 @@
 import { configureStore } from '@reduxjs/toolkit';
-import portfolioSlice from '../features/Portfolio/portfolioSlice';
+import coinSlice from '../features/CoinsTable/coinSlice';
 import userSlice, { persistUserMiddleware } from './user/userSlice';
-
+import api from './rtkQueryApi'
 
 const store = configureStore({
   reducer: {
     user: userSlice,
-    portfolio: portfolioSlice,
+    coin: coinSlice,
+    [api.reducerPath]: api.reducer
   },
-  middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(persistUserMiddleware)
+  middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(persistUserMiddleware).concat(api.middleware)
 })
 
 

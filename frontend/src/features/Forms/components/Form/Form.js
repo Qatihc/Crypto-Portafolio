@@ -36,7 +36,8 @@ const Form = ({ children, formValidator, onSubmit, ...props }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (isError) return setDisableSubmit(true);
-    onSubmit(formValues);
+    
+    return onSubmit(formValues);
   }
 
   const transformSubmitButtonChild = (child) => {

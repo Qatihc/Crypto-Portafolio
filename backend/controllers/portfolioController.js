@@ -19,29 +19,64 @@ const retrieveUserPortfolio = async (req, res) => {
   res.send(coinsWithPrice);
 }
 
+const retrieveTransactionsCount = async (req, res, next) => {
+  const { portfolio } = res.locals.user;
+  try {
+    const transactionsCount = await Transaction.aggregate([
+      {
+        $match: { portfolio }
+      },
+      {
+        $count: "totalTransactions"
+      }
+    ])
+
+    /* Aggregate devuelve el resultado como un array de un solo elemento */
+    return res.send(transactionsCount[0]);
+  } catch (err) {
+    return next(err);
+  }
+}
+
 const retrieveTransactions = async (req, res, next) => {
-  const { symbol, offset = 0} = req.query;
+  const { symbol, offset = 0, limit = 20} = req.query;
+  if (offset < 0) return res.status(401).send('Invalid offset');
+  
   const { portfolio } = res.locals.user;
   const match = (symbol) ?
     ({ symbol, portfolio }) :
     ({ portfolio });
 
-  const transactions = await Transaction.aggregate([
+  const transactionsData = await Transaction.aggregate([
     { 
       $match: match 
     },
     {
       $sort: { date: -1 },
     },
-    {
-      $skip: Number(offset),
+    { $facet: 
+      {
+        totalTransactions: [{$count: "totalTransactions"}],
+        transactions: [
+          {
+            $skip: Number(offset)
+          },
+          {
+            $limit: limit,
+          }
+        ]
+      }
     },
     {
-      $limit: 20,
-    },
+      $project: {
+        transactions: "$transactions",
+        totalTransactions: { "$arrayElemAt": [ "$totalTransactions.totalTransactions", 0 ]}
+      }
+    }
   ])
 
-  return res.send(transactions);
+  /* El aggregate devuelve el resultado como un array de un solo elemento */
+  return res.send(transactionsData[0]);
 }
 
 const retrievePortfolioReturns = (req, res) => {
@@ -145,5 +180,6 @@ module.exports = {
   deleteManyTransaction,
   updateTransaction,
   retrievePortfolioCoinsPrice,
-  retrieveTransactions
+  retrieveTransactions,
+  retrieveTransactionsCount
 };

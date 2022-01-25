@@ -1,9 +1,7 @@
 import React, { useEffect } from "react";
 import Form from "../Form/Form";
 import Input from "../Input/Input";
-
 import { useDispatch, useSelector } from "react-redux";
-
 import validateSignUpForm from "./utils/validateSignUpForm";
 import { signup } from "~/src/app/user/userSlice";
 import styles from './SignUpForm.module.css'
