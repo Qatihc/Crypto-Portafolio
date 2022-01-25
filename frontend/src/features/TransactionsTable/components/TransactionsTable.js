@@ -15,16 +15,6 @@ const TransactionsTable = () => {
   const currentPageNumber = useSelector(transactionSelectors.selectCurrentPageNumber);
   const pageCount = useSelector(transactionSelectors.selectPageCount);
   const transactions = useSelector(transactionSelectors.selectCurrentPageTransactions);
-  const canNextPage = currentPageNumber !== pageCount;
-  const canPreviousPage = currentPageNumber !== 1;
-
-  const nextPage = () => {
-    dispatch(goToPage(currentPageNumber + 1));
-  }
-
-  const previousPage = () => {
-    dispatch(goToPage(currentPageNumber - 1));
-  }
 
   const columns = useMemo(() => [
     {
@@ -58,37 +48,12 @@ const TransactionsTable = () => {
     })
   }, [transactions])
 
-  const tableInstance = useTable(
-    { 
-      columns,
-      data ,
-      manualPagination: true,
-      defaultPageSize: 20,
-      minRows: 20,
-      pageCount: useSelector(transactionSelectors.selectPageCount)
-    }, 
-    usePagination,
-    );
-
   return (
     <>
-      <TableLayout 
-        {...tableInstance}
+      <TableLayout
+        columns={columns}
+        data={data}
       />
-      <div className="pagination">
-        <button onClick={() => dispatch(gotoPage(0))} disabled={!canPreviousPage}>
-          {'<<'}
-        </button>{' '}
-        <button onClick={() => previousPage()} disabled={!canPreviousPage}>
-          {'<'}
-        </button>{' '}
-        <button onClick={() => nextPage()} disabled={!canNextPage}>
-          {'qq>'}
-        </button>{' '}
-        <button onClick={() => gotoPage(pageCount - 1)} disabled={!canNextPage}>
-          {'>>'}
-        </button>{' '}
-      </div>
     </>
   )
 }
