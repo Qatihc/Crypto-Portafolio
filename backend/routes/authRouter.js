@@ -2,11 +2,13 @@ const authRouter = require('express').Router();
 const {
   registerUser,
   changePassword,
-  login
+  login,
+  requireAuth
 } = require('../controllers/authController');
+const { authValidator } = require('../controllers/validator');
 
-authRouter.post('/register', registerUser);
-authRouter.post('/changePassword', changePassword);
-authRouter.post('/login', login);
+authRouter.post('/register', authValidator('register'), registerUser);
+authRouter.post('/login', authValidator('login'), login);
+authRouter.post('/changePassword', requireAuth, authValidator('changePassword'), changePassword);
 
 module.exports = authRouter;

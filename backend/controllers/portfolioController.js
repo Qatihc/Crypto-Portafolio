@@ -2,10 +2,7 @@ const Portfolio = require('../models/portfolioSchema');
 const Coin = require('../models/coinSchema');
 const Transaction = require('../models/transactionSchema')
 
-const inputErrorMessages = require('./utils/inputValidators/inputErrorMessages');
-const RequestError = require('./utils/errorTypes/RequestError')
-
-const retrieveUserPortfolio = async (req, res) => {
+const retrieveUserCoins = async (req, res) => {
   const { portfolio } = res.locals.user;
   const coins = await Coin
     .find({ portfolio }, 'amount symbol')
@@ -62,7 +59,7 @@ const retrieveTransactions = async (req, res, next) => {
             $skip: Number(offset)
           },
           {
-            $limit: limit,
+            $limit: +limit,
           }
         ]
       }
@@ -93,7 +90,7 @@ const createTransaction = async (req, res, next) => {
   amount = parseFloat(amount);
   symbol = symbol.toUpperCase();
   const { portfolio } = res.locals.user;
-
+  console.log(symbol)
   if (!req.app.locals.isSupportedCoin(symbol)) return res.send('invalid coin');
   if (!amount) return res.send('Amount must not be 0');
 
@@ -154,32 +151,12 @@ const updateTransaction = async (req, res, next) => {
   res.send('ready go');
 }
 
-const retrievePortfolioCoinsPrice = async (req, res, next) => {
-  try {
-    const { portfolio } = res.locals.user;
-    const coins = await Coin.find({ portfolio, amount: { $ne: 0 } }, 'amount symbol');
-
-    const coinsUsdPrice = {};
-    for (coin of coins) {
-      const cgId = req.app.locals.symbolToCoinGeckoId[coin.symbol];
-      const usdPrice = req.app.locals.coinPrices[cgId].usd;
-      coinsUsdPrice[coin.symbol] = usdPrice;
-    }
-
-    res.send(coinsUsdPrice)
-  } catch (err) {
-    console.log(err)
-    next(err);
-  }
-}
-
 module.exports = {
-  retrieveUserPortfolio,
+  retrieveUserCoins,
   retrievePortfolioReturns,
   createTransaction,
   deleteManyTransaction,
   updateTransaction,
-  retrievePortfolioCoinsPrice,
   retrieveTransactions,
   retrieveTransactionsCount
 };

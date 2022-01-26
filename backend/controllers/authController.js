@@ -1,11 +1,9 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
-const inputErrorMessages = require('./utils/inputValidators/inputErrorMessages')
-const {registerValidator, changePasswordValidator} = require('./utils/inputValidators/authValidator');
 const RequestError = require('./utils/errorTypes/RequestError');
 const User = require('../models/userSchema');
 const Portfolio = require('../models/portfolioSchema');
-
+const { validationResult } = require('express-validator');
 
 const findJwtUser = (token) => {
   return new Promise(async (resolve, reject) => {
@@ -28,8 +26,10 @@ const generarToken = async (user) => {
 }
 
 const registerUser = async (req, res, next) => {
-  const err = registerValidator(req.body);
-  if (err) return next(err);
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
 
   const {username, password} = req.body;
   try {
@@ -54,14 +54,14 @@ const registerUser = async (req, res, next) => {
 }
 
 const changePassword = async (req, res, next) => {
-  const err = changePasswordValidator(req.body);
-  if (err) return next(err);
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
   /* CHEQUEAR ESTO QUE CUALQUIER USER PUEDE CAMBIAR LA CONTRASENIA DE OTRO!!!!!!!! WTF */
-  const {username, password, newPassword} = req.body;
+  const { password, newPassword } = req.body;
+  const { user } = req.locals;
   try {
-    const user = await User.findOne({username_lower: username.toLowerCase()});
-    if (!user) return next(new RequestError(inputErrorMessages.userNotFound, 400))
-    
     const passwordMatches = await bcrypt.compare(password, user.password);
     if (passwordMatches) {
       user.password = newPassword;
@@ -76,6 +76,11 @@ const changePassword = async (req, res, next) => {
 }
 
 const login = async (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+
   const {token} = req.headers;
   const {username, password} = req.body;
 
@@ -132,4 +137,4 @@ const optionalAuth = async (req, res, next) => {
   }
 }
 
-module.exports = {registerUser, changePassword, requireAuth, optionalAuth, login}
+module.exports = { registerUser, changePassword, requireAuth, optionalAuth, login }
