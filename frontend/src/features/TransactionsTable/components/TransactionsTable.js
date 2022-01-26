@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { useGetTransactionsCountQuery, useGetTransactionsQuery } from '../transactionSlice';
 import formatDate from '../utils/formatDate';
+import CreateTransactionForm from './createTransactionForm';
 import TableLayout from './TableLayout';
 
 
@@ -58,6 +59,7 @@ const TransactionsTable = () => {
   const canNextPage = currentPage !== lastPage;
   return (
     <>
+      <CreateTransactionForm />
       <TableLayout
         columns={columns}
         data={data}

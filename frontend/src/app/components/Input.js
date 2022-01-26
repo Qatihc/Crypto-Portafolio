@@ -8,7 +8,7 @@ const Input = ({
   value,
   error,
   forceDisplayError,
-  classNames
+  classNames = {}
 }) => {
   const [displayError, setDisplayError] = useState(false);
 

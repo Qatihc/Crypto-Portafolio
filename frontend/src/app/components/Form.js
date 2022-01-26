@@ -5,7 +5,7 @@ import useFormValidator from '../hooks/useFormValidator'
 import Input from './Input'
 import SubmitButton from './SubmitButton'
 
-const Form = ({ children, formValidator, onSubmit, className }) => {
+const Form = ({ children, formValidator, onSubmit, className = "" }) => {
   const [disableSubmit, setDisableSubmit] = useState(false);
 
   const inputNames = React.Children.toArray(children)
@@ -13,7 +13,7 @@ const Form = ({ children, formValidator, onSubmit, className }) => {
     .map((child) => child.props.name)
   
   const { formValues, handleInputChange } = useForm(inputNames);
-  const { formErrors } = useFormValidator(formValues, formValidator);
+  const formErrors = formValidator ? useFormValidator(formValues, formValidator) : {};
   const isError = Object.values(formErrors).some(value => value);
 
   useEffect(() => {
