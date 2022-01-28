@@ -1,9 +1,23 @@
 import React, { useEffect, useState, useMemo } from 'react';
-import { useGetTransactionsCountQuery, useGetTransactionsQuery } from '../transactionSlice';
+import { isRowEdit, useGetTransactionsCountQuery, useGetTransactionsQuery } from '../transactionSlice';
 import formatDate from '../utils/formatDate';
 import CreateTransactionForm from './createTransactionForm';
 import TableLayout from './TableLayout';
+import TransactionActions from './TransactionActions';
+import { useSelector } from 'react-redux';
+import styles from './TableLayout.module.css'
 
+const EditableCell = ({ row, value: initialValue, column }) => {
+  const [value, setValue] = useState(initialValue);
+  const type = (column.type) ? column.type : 'text';
+
+  const handleChange = (e) => {
+    console.log(e.target.value);
+    setValue(e.target.value)
+  }
+
+  return <input type={type} value={value} onChange={handleChange}/>
+}
 
 const TransactionsTable = () => {
   const [ currentPage, setCurrentPage ] = useState(1);
@@ -13,27 +27,38 @@ const TransactionsTable = () => {
   const { data: response, isLoading } = useGetTransactionsQuery({ pageNumber: currentPage, pageSize });
   const transactions = response ? response.transactions : [];
 
+  /* Type es un atributo que defini yo, usado para saber que tipo de input mostrar al modificar la celda correspondiente a cada columna. */
   const columns = useMemo(() => [
     {
       Header: 'Nombre',
-      accessor: 'symbol'
+      accessor: 'symbol',
+      type: 'text'
     },
     {
       Header: 'Cantidad',
-      accessor: 'amount'
+      accessor: 'amount',
+      type: 'number'
     },
     {
       Header: 'Precio',
-      accessor: 'price'
+      accessor: 'price',
+      type: 'number'
     },
     {
       Header: 'Total',
-      accessor: 'total'
+      accessor: 'total',
+      type: 'number'
     },
     {
       Header: 'Fecha',
-      accessor: 'date'
+      accessor: 'date',
+      type: 'date'
     },
+    {
+      Header: 'Acciones',
+      accessor: 'actions',
+      Cell: ({ row }) => <TransactionActions row={row}/>
+    }
   ], [])
 
   const data = useMemo(() => {
@@ -57,12 +82,18 @@ const TransactionsTable = () => {
   const lastPage = Math.ceil(totalTransactions / pageSize);
   const canPreviousPage = currentPage !== firstPage;
   const canNextPage = currentPage !== lastPage;
+  
+  const defaultColumn = {
+    Cell: ({ row, value, ...props }) => (useSelector(isRowEdit(row.original.id))) ? <EditableCell row={row} value={value} {...props} /> : value
+  }
+
   return (
     <>
       <CreateTransactionForm />
       <TableLayout
         columns={columns}
         data={data}
+        defaultColumn={defaultColumn}
       />
       <div className="pagination">
         <div>current page {currentPage}</div>

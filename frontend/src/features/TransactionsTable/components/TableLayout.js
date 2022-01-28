@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useTable } from 'react-table'
 
-const TableLayout = ({ columns, data}) => {
-  const tableInstance = useTable({columns, data});
+const TableLayout = ({ columns, data, defaultColumn, rowProps }) => {
+  const [hoveredRow, setHoveredRow] = useState(null);
+  const tableInstance = useTable({ columns, data, defaultColumn });
   const {
     getTableProps,
     getTableBodyProps,
@@ -13,7 +14,7 @@ const TableLayout = ({ columns, data}) => {
 
   return (
     <>
-      <table {...getTableProps()}>
+      <table {...getTableProps()} onMouseLeave={() => setHoveredRow(null)}>
         <thead>
           {headerGroups.map(headerGroup => (
             <tr {...headerGroup.getHeaderGroupProps()}>
@@ -28,18 +29,19 @@ const TableLayout = ({ columns, data}) => {
         <tbody {...getTableBodyProps()}>
           {rows.map(row => {
             prepareRow(row)
+            row.isHover = hoveredRow === row.id
+            const rowKey = row.original.id;
             return (
-              <>
-              <tr {...row.getRowProps()}>
+              <tr {...row.getRowProps(rowProps)} key={rowKey} onMouseEnter={() => setHoveredRow(row.id)}>
                 {row.cells.map(cell => {
-                  return (
-                    <td {...cell.getCellProps()}>
+                  const cellKey = cell.column.id;
+                  return(
+                    <td {...cell.getCellProps()} key={cellKey}>
                       {cell.render('Cell')}
                     </td>
                   )
                 })}
               </tr>
-              </>
             )
           })}
         </tbody>

@@ -1,4 +1,6 @@
+import { createSlice } from "@reduxjs/toolkit";
 import api from "~/src/app/rtkQueryApi";
+
 
 const transactionApi = api.injectEndpoints({
   endpoints: (build) => ({
@@ -30,4 +32,31 @@ const transactionApi = api.injectEndpoints({
   })
 })
 
+const transactionSlice = createSlice({
+  name: 'transaction',
+  initialState: {
+    editRows: {},
+    hoverRows: {},
+  },
+  reducers: {
+    addEditRow: (state, action) => {
+      const rowId = action.payload;
+      state.editRows[rowId] = true;
+    },
+    removeEditRow: (state, action) => {
+      const rowId = action.payload;
+      state.editRows[rowId] = undefined;
+    }
+  }
+})
+
+const transactionSliceReducer = transactionSlice.reducer;
+
+export const isRowEdit = (rowId) => (state) => {
+  return state.transaction.editRows[rowId];
+}
+
 export const { useGetTransactionsCountQuery, useGetTransactionsQuery, useCreateTransactionMutation } = transactionApi
+
+export const { addEditRow, removeEditRow } = transactionSlice.actions
+export { transactionSliceReducer };
