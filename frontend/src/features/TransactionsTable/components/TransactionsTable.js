@@ -8,11 +8,20 @@ import { useSelector } from 'react-redux';
 import styles from './TableLayout.module.css'
 
 const EditableCell = ({ row, value: initialValue, column }) => {
+  const columnName = column.id;
+  if (!row.editedValues) row.editedValues = {};
   const [value, setValue] = useState(initialValue);
+  useEffect(() => {
+    /* Esta bugueado, si trato de volver al valor original con una update no actualiza y manda el valor anterior. Arreglar. */
+    if (row.original[columnName] !== value) {
+      row.editedValues[columnName] = value;
+    }
+  }, [value]);
+
   const type = (column.type) ? column.type : 'text';
 
   const handleChange = (e) => {
-    console.log(e.target.value);
+    console.log(row)
     setValue(e.target.value)
   }
 

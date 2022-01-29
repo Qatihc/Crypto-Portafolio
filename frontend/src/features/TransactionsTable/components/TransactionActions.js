@@ -1,27 +1,32 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { addEditRow, removeEditRow, isRowEdit } from '../transactionSlice';
+import { addEditRow, removeEditRow, isRowEdit, useUpdateTransactionMutation } from '../transactionSlice';
 import styles from './TransactionActions.module.css'
 
 const TransactionActions = ({ row }) => { 
-  const [showConfirmPrompt, setShowConfirmPrompt] = useState(false);
+  const [updateTransaction, { isLoading }] = useUpdateTransactionMutation();
   const dispatch = useDispatch();
   const { id } = row.original;
   const isHover = row.isHover
   const isEdit = useSelector(isRowEdit(id))
+    /* IS DELETE PROVISOINAL */ const isDelete = false;
 
-  const handleUpdateRow = () => {
+  if (!isHover && !isEdit && !isDelete) return null;
+
+  const handleEditRow = () => {
     dispatch(addEditRow(id))
   }
-  const handleDeleteRow = () => {
-    setShowConfirmPrompt(true)
+  const handleUpdateRow = () => {
+    updateTransaction({ transactionId: id, ...row.editedValues });
+    dispatch(removeEditRow(id));
   }
 
-  /* IS DELETE PROVISOINAL */ const isDelete = false;
+  const handleDeleteRow = () => {
+  }
 
   let actionButtons;
   if (isEdit) {
-    actionButtons = <ConfirmAction onConfirm={() => alert('upda')} onCancel={() => dispatch(removeEditRow(id))}/>
+    actionButtons = <ConfirmAction onConfirm={handleUpdateRow} onCancel={() => dispatch(removeEditRow(id))}/>
   } 
   else if (isDelete) {
     /* TO DO */
@@ -29,13 +34,12 @@ const TransactionActions = ({ row }) => {
   else {
     actionButtons = (
       <>
-        <button onClick={handleUpdateRow}>Upda</button>
+        <button onClick={handleEditRow}>Upda</button>
         <button onClick={handleDeleteRow}>Dele</button>
       </>
     )
   }
 
-  if (!isHover && !isEdit && !isDelete) return null;
 
   return (
     <div className={styles.actionsContainer}>

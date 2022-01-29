@@ -28,6 +28,14 @@ const transactionApi = api.injectEndpoints({
         data: { symbol, price, amount, date },
       }),
       invalidatesTags: [{ type: 'Transactions' }],
+    }),
+    updateTransaction: build.mutation({
+      query: ({ id, ...data }) => ({
+        url: 'portfolio/updateTransaction',
+        method: 'POST',
+        data: { transactionId: id, ...data }
+      }),
+      invalidatesTags: [{ type: 'Transactions' }],
     })
   })
 })
@@ -56,7 +64,7 @@ export const isRowEdit = (rowId) => (state) => {
   return state.transaction.editRows[rowId];
 }
 
-export const { useGetTransactionsCountQuery, useGetTransactionsQuery, useCreateTransactionMutation } = transactionApi
+export const { useGetTransactionsCountQuery, useGetTransactionsQuery, useCreateTransactionMutation, useUpdateTransactionMutation } = transactionApi
 
 export const { addEditRow, removeEditRow } = transactionSlice.actions
 export { transactionSliceReducer };
