@@ -41,27 +41,32 @@ const TransactionsTable = () => {
     {
       Header: 'Nombre',
       accessor: 'symbol',
-      type: 'text'
+      type: 'text',
+      canUpdate: false
     },
     {
       Header: 'Cantidad',
       accessor: 'amount',
-      type: 'number'
+      type: 'number',
+      canUpdate: true,
     },
     {
       Header: 'Precio',
       accessor: 'price',
-      type: 'number'
+      type: 'number',
+      canUpdate: true
     },
     {
       Header: 'Total',
       accessor: 'total',
-      type: 'number'
+      type: 'number',
+      canUpdate: false
     },
     {
       Header: 'Fecha',
       accessor: 'date',
-      type: 'date'
+      type: 'date',
+      canUpdate: false,
     },
     {
       Header: 'Acciones',
@@ -93,7 +98,7 @@ const TransactionsTable = () => {
   const canNextPage = currentPage !== lastPage;
   
   const defaultColumn = {
-    Cell: ({ row, value, ...props }) => (useSelector(isRowEdit(row.original.id))) ? <EditableCell row={row} value={value} {...props} /> : value
+    Cell: ({ row, value, column }) => (column.canUpdate && useSelector(isRowEdit(row.original.id))) ? <EditableCell row={row} value={value} column={column} /> : value
   }
 
   return (
