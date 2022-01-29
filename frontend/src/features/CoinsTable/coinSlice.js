@@ -9,7 +9,7 @@ const coinApi = api.injectEndpoints({
           url: 'portfolio/coins',
           method: 'GET',
       }),
-      providesTags: () => [{ type: 'Coins'}] 
+      providesTags: () => [{ type: 'coins'}] 
     })
   })
 })

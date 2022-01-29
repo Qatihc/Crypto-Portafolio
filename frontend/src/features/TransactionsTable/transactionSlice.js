@@ -8,8 +8,10 @@ const transactionApi = api.injectEndpoints({
       query: () => ({ url: `portfolio/count`}),
       transformResponse: (baseQueryReturnValue) => {
         return baseQueryReturnValue.totalTransactions;
-      }
+      },
+      providesTags: [{ type: 'transactionCount'}]
     }),
+    
     getTransactions: build.query({
       query: ({ pageNumber, pageSize }) => {
         const offset = (pageNumber - 1) * pageSize;
@@ -19,31 +21,34 @@ const transactionApi = api.injectEndpoints({
           params: { offset, limit: pageSize },
         })
       },
-      providesTags: (result, error, { pageNumber, pageSize}) => [{ type: 'Transactions', id: `${pageNumber};${pageSize}`}] 
+      providesTags: (result, error, { pageNumber, pageSize}) => [{ type: 'transactions', id: `${pageNumber};${pageSize}`}] 
     }),
+
     createTransaction: build.mutation({
       query: ({ symbol, price, amount, date }) => ({
         url: `portfolio/createTransaction`,
         method: 'POST',
         data: { symbol, price, amount, date },
       }),
-      invalidatesTags: [{ type: 'Transactions' }, { type: 'Coins'}],
+      invalidatesTags: [{ type: 'transactions' }, { type: 'coins'}, { type: 'transactionCount' }],
     }),
+
     updateTransaction: build.mutation({
       query: ({ id, ...data }) => ({
         url: 'portfolio/updateTransaction',
         method: 'POST',
         data: { transactionId: id, ...data }
       }),
-      invalidatesTags: [{ type: 'Transactions' }, { type: 'Coins'}],
+      invalidatesTags: [{ type: 'transactions' }, { type: 'coins'}],
     }),
+
     deleteTransaction: build.mutation({
       query: ({ transactionId }) => ({
         url: 'portfolio/deleteTransaction',
         method: 'POST',
         data: { transactionId }
       }),
-      invalidatesTags: [{ type: 'Transactions' }, { type: 'Coins'}],
+      invalidatesTags: [{ type: 'transactions' }, { type: 'coins'}, { type: 'transactionCount' }],
     })
   })
 })
