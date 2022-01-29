@@ -90,49 +90,46 @@ const createTransaction = async (req, res, next) => {
   amount = parseFloat(amount);
   symbol = symbol.toUpperCase();
   const { portfolio } = res.locals.user;
-  console.log(symbol)
-  if (!req.app.locals.isSupportedCoin(symbol)) return res.send('invalid coin');
-  if (!amount) return res.send('Amount must not be 0');
 
-  const coinWithSameSymbolAsTransaction = await Coin.findOne({ portfolio, symbol });
-  if (!coinWithSameSymbolAsTransaction) {
-    await Coin.create({ symbol, portfolio });
+  if (!req.app.locals.isSupportedCoin(symbol)) return res.status(400).send('Symbolo invalido.');
+  if (!amount) return res.status(400).send('La cantidad debe ser distinta de 0.');
+
+  try {
+    let coinWithSameSymbol = await Coin.findOne({ portfolio, symbol });
+    if (!coinWithSameSymbol) {
+      coinWithSameSymbol = await Coin.create({ symbol, portfolio });
+    }
+
+    const transaction = new Transaction({ 
+      symbol,
+      amount,
+      price,
+      date,
+      coin: coinWithSameSymbol.id,
+      portfolio 
+    });
+
+    coinWithSameSymbol.amount += transaction.amount;
+    await coinWithSameSymbol.save();
+    await transaction.save();
+
+    return res.status(200).send();
+  } catch (err) {
+    return next(err);
   }
-
-  const coin = await Coin.findOne({ symbol, portfolio });
-  transaction = new Transaction({ symbol, amount, price, date, coin: coin.id, portfolio })
-
-  coin.amount += transaction.amount;
-
-  await coin.save();
-  await transaction.save();
-
-  /*   await Coin.updateOne(
-      { _id: transaction.coin },
-      {
-        $push: {
-          latestTransactions: {
-            $each: transaction.id,
-            $sort: {date: -1},
-            $slice: MAX_LATEST_TRANSACTIONS
-          }
-      }) */
-
-  return res.send(transaction.id)
 }
 
-const deleteManyTransaction = async (req, res, next) => {
+const deleteTransactions = async (req, res, next) => {
   let { transactionId } = req.body;
   if (!Array.isArray(transactionId)) transactionId = [transactionId];
-  console.log(transactionId)
   try {
-    const transactionDelete = await Transaction.deleteMany({ _id: { $in: transactionId } })
-    console.log(transactionDelete.deletedCount)
-    /* TODO: CHEQUEAR SI REALMENTE BORRO ALGO! */
-    return res.send('ok!')
+    const deletedTransactions = await Transaction.deleteMany({ _id: { $in: transactionId } })
+    if (deletedTransactions.deletedCount === 0) {
+      res.status(400).send('La/s transaccion/es no existe/n.')
+    }
+    return res.status(200).send()
   } catch (err) {
-    console.log(err)
-    return res.send('ok!')
+    return next(err);
   }
 }
 
@@ -147,15 +144,19 @@ const updateTransaction = async (req, res, next) => {
     }
   }
 
-  await Transaction.findOneAndUpdate({ _id: transactionId }, update, { useFindAndModify: false });
-  res.send('ready go');
+  try {
+    await Transaction.findOneAndUpdate({ _id: transactionId }, update, { useFindAndModify: false });
+    return res.status(200).send();
+  } catch (err) {
+    return next(err);
+  }
 }
 
 module.exports = {
   retrieveUserCoins,
   retrievePortfolioReturns,
   createTransaction,
-  deleteManyTransaction,
+  deleteTransactions,
   updateTransaction,
   retrieveTransactions,
   retrieveTransactionsCount
