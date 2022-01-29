@@ -1,16 +1,13 @@
 import React, { useEffect, useMemo } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { selectAllCoins, fetchCoins } from '../coinSlice';
+import { useDispatch } from 'react-redux';
+import { useGetCoinsQuery } from '../coinSlice';
 
 import Table from './Table';
 
 
 const CoinsTable = () => {
-  const dispatch = useDispatch();
-  const coins = useSelector(selectAllCoins)
-  useEffect(() => {
-    dispatch(fetchCoins());
-  }, [])
+  const { data: response, isLoading } = useGetCoinsQuery();
+  const coins = response ? response : [];
 
   const columns = useMemo(() => [
     {

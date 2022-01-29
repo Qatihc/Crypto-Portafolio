@@ -10,9 +10,9 @@ const {
   retrieveTransactionsCount
 } = require('../controllers/portfolioController');
 
-portfolioRouter.post('/create', requireAuth, createTransaction);
-portfolioRouter.post('/delete', requireAuth, deleteManyTransaction);
-portfolioRouter.post('/update', requireAuth, updateTransaction);
+portfolioRouter.post('/createTransaction', requireAuth, createTransaction);
+portfolioRouter.post('/deleteTransaction', requireAuth, deleteManyTransaction);
+portfolioRouter.post('/updateTransaction', requireAuth, updateTransaction);
 
 portfolioRouter.get('/returns', requireAuth, retrievePortfolioReturns);
 portfolioRouter.get('/coins', requireAuth, retrieveUserCoins);

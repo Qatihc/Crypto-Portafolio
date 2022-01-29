@@ -27,7 +27,7 @@ const transactionApi = api.injectEndpoints({
         method: 'POST',
         data: { symbol, price, amount, date },
       }),
-      invalidatesTags: [{ type: 'Transactions' }],
+      invalidatesTags: [{ type: 'Transactions' }, { type: 'Coins'}],
     }),
     updateTransaction: build.mutation({
       query: ({ id, ...data }) => ({
@@ -35,7 +35,15 @@ const transactionApi = api.injectEndpoints({
         method: 'POST',
         data: { transactionId: id, ...data }
       }),
-      invalidatesTags: [{ type: 'Transactions' }],
+      invalidatesTags: [{ type: 'Transactions' }, { type: 'Coins'}],
+    }),
+    deleteTransaction: build.mutation({
+      query: ({ transactionId }) => ({
+        url: 'portfolio/deleteTransaction',
+        method: 'POST',
+        data: { transactionId }
+      }),
+      invalidatesTags: [{ type: 'Transactions' }, { type: 'Coins'}],
     })
   })
 })
@@ -45,6 +53,7 @@ const transactionSlice = createSlice({
   initialState: {
     editRows: {},
     hoverRows: {},
+    deleteRows: {},
   },
   reducers: {
     addEditRow: (state, action) => {
@@ -54,6 +63,14 @@ const transactionSlice = createSlice({
     removeEditRow: (state, action) => {
       const rowId = action.payload;
       state.editRows[rowId] = undefined;
+    },
+    addDeleteRow: (state, action) => {
+      const rowId = action.payload;
+      state.deleteRows[rowId] = true;
+    },
+    removeDeleteRow: (state, action) => {
+      const rowId = action.payload;
+      state.deleteRows[rowId] = undefined;
     }
   }
 })
@@ -64,7 +81,17 @@ export const isRowEdit = (rowId) => (state) => {
   return state.transaction.editRows[rowId];
 }
 
-export const { useGetTransactionsCountQuery, useGetTransactionsQuery, useCreateTransactionMutation, useUpdateTransactionMutation } = transactionApi
+export const isRowDelete = (rowId) => (state) => {
+  return state.transaction.deleteRows[rowId];
+}
 
-export const { addEditRow, removeEditRow } = transactionSlice.actions
+export const { 
+  useGetTransactionsCountQuery,
+  useGetTransactionsQuery,
+  useCreateTransactionMutation,
+  useUpdateTransactionMutation,
+  useDeleteTransactionMutation 
+} = transactionApi
+
+export const { addEditRow, removeEditRow, addDeleteRow, removeDeleteRow } = transactionSlice.actions
 export { transactionSliceReducer };

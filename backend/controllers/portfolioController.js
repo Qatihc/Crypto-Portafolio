@@ -122,11 +122,11 @@ const createTransaction = async (req, res, next) => {
 }
 
 const deleteManyTransaction = async (req, res, next) => {
-  let { transactionIds } = req.body;
-  if (!Array.isArray(transactionIds)) transactionIds = [transactionIds];
-
+  let { transactionId } = req.body;
+  if (!Array.isArray(transactionId)) transactionId = [transactionId];
+  console.log(transactionId)
   try {
-    const transactionDelete = await Transaction.deleteMany({ _id: { $in: transactionIds } })
+    const transactionDelete = await Transaction.deleteMany({ _id: { $in: transactionId } })
     console.log(transactionDelete.deletedCount)
     /* TODO: CHEQUEAR SI REALMENTE BORRO ALGO! */
     return res.send('ok!')
