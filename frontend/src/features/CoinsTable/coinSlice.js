@@ -1,4 +1,4 @@
-import api from "../../app/rtkQueryApi";
+import api from "~/src/common/rtkQueryApi";
 
 const coinApi = api.injectEndpoints({
   endpoints: (build) => ({

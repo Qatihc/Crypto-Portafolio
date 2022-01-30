@@ -1,5 +1,5 @@
 import React from 'react';
-import { Form, Input, FormContainer, SubmitButton } from "~/src/app";
+import { Form, Input, SubmitButton } from "~/src/common";
 import { useCreateTransactionMutation } from '../transactionSlice';
 const createTransactionForm = () => {
   const [createTransaction, { isLoading }] = useCreateTransactionMutation();
@@ -9,14 +9,14 @@ const createTransactionForm = () => {
   }
 
   return (
-    <FormContainer>
+    <div>
       <Form onSubmit={onSubmit}>
         <Input name="symbol" label="Nombre"/>
         <Input name="amount" label="Cantidad" type="number"/>
         <Input name="price" label="Precio" type="number"/>
         <SubmitButton>Agregar</SubmitButton>
       </Form>
-    </FormContainer>
+    </div>
   )
 }
 

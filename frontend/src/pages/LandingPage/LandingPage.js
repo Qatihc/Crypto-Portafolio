@@ -3,7 +3,7 @@ import { Navigate } from "react-router-dom";
 import styles from './LandingPage.module.css';
 
 import { useSelector } from 'react-redux';
-import { selectCurrentUser } from '../../app/';
+import { selectCurrentUser } from '~/src/common';
 
 
 

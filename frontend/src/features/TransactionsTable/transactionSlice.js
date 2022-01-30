@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import api from "~/src/app/rtkQueryApi";
+import api from "~/src/common/rtkQueryApi";
 
 
 const transactionApi = api.injectEndpoints({

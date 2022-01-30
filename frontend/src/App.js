@@ -6,7 +6,7 @@ import { LoginForm } from './features/AuthForms';
 import { SignUpForm } from './features/AuthForms';
 import { Provider } from 'react-redux';
 import styles from './App.modules.css'
-import store from './app/store';
+import store from './common/store';
 
 const App = () => {
 
@@ -18,7 +18,7 @@ const App = () => {
           <Route path="/" element={<Navigate to="/login"/>} />
           <Route path="/signup" element={<LandingPage form={<SignUpForm/>}/>} />
           <Route path="/login" element={<LandingPage form={<LoginForm/>}/>}/>
-          <Route path="/portfolio" element={<PortfolioPage />}/>
+          <Route path="/portfolio/*" element={<PortfolioPage />}/>
         </Routes>
       </main>
       </BrowserRouter>

@@ -1,10 +1,8 @@
 import React, { useEffect } from "react";
-
 import { useDispatch, useSelector } from "react-redux";
 import validateSignUpForm from "../utils/validateSignUpForm";
 import { Link } from "react-router-dom";
-import { selectUserError, resetUserError, signup } from "~/src/app";
-import styles from '../styles/AuthForm.module.css'
+import { selectUserError, resetUserError, signup } from "~/src/common";
 
 import { FormContainer, StyledForm, StyledInput, StyledSubmitButton, FormTitle, FormSubtitle, FormError } from "./StyledComponents";
 

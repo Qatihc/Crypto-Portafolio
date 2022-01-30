@@ -5,7 +5,6 @@ import CreateTransactionForm from './createTransactionForm';
 import TableLayout from './TableLayout';
 import TransactionActions from './TransactionActions';
 import { useSelector } from 'react-redux';
-import styles from './TableLayout.module.css'
 
 const EditableCell = ({ row, value: initialValue, column }) => {
   const columnName = column.id;

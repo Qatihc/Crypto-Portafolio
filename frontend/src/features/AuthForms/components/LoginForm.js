@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import validateLoginForm from "../utils/validateLoginForm";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import { selectUserError, resetUserError, login } from "~/src/app";
+import { selectUserError, resetUserError, login } from "~/src/common";
 
 import { FormContainer, StyledForm, StyledInput, StyledSubmitButton, FormTitle, FormSubtitle, FormError } from "./StyledComponents";
 

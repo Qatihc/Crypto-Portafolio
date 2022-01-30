@@ -1,4 +1,4 @@
-import { Form, Input, SubmitButton } from '~/src/app';
+import { Form, Input, SubmitButton } from '~/src/common';
 import styled from 'styled-components';
 
 const FormContainer = styled.div`
