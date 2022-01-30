@@ -11,7 +11,7 @@ const useFormValidator = (formValues, formValidator) => {
     }
     setFormErrors(newFormErrors);
   }, [formValues])
-  return { formErrors };
+  return formErrors;
 }
 
 

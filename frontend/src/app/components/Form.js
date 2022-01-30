@@ -1,18 +1,21 @@
 import React, { useState, useEffect } from 'react'
 import useForm from '../hooks/useForm'
 import useFormValidator from '../hooks/useFormValidator'
+import { childrenByType, firstChildByType } from '../utils/selectChildrenByType'
 
 import Input from './Input'
 import SubmitButton from './SubmitButton'
 
-const Form = ({ children, formValidator, onSubmit, className = "" }) => {
+
+const Form = ({ children, formValidator, onSubmit, className }) => {
   const [disableSubmit, setDisableSubmit] = useState(false);
 
-  const inputNames = React.Children.toArray(children)
-    .filter((child) => child.type === Input)
-    .map((child) => child.props.name)
+  const inputChildren = childrenByType(children, Input);
+  const submitButtonChild = firstChildByType(children, SubmitButton);
+  const inputNames = inputChildren.map((child) => child.props.name)
   
   const { formValues, handleInputChange } = useForm(inputNames);
+  /* Asumo que form validator no va a cambiar durante la ejecucion, y uso el hook condicionalmente ya que siempre ira a la misma rama. */
   const formErrors = formValidator ? useFormValidator(formValues, formValidator) : {};
   const isError = Object.values(formErrors).some(value => value);
 
@@ -20,6 +23,12 @@ const Form = ({ children, formValidator, onSubmit, className = "" }) => {
     if (!disableSubmit) return;
     setDisableSubmit(isError)
   }, [formErrors])
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (isError) return setDisableSubmit(true);
+    return onSubmit(formValues);
+  }
 
   const transformInputChild = (child) => {
     const { name } = child.props;
@@ -33,13 +42,6 @@ const Form = ({ children, formValidator, onSubmit, className = "" }) => {
     })
   }
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (isError) return setDisableSubmit(true);
-    
-    return onSubmit(formValues);
-  }
-
   const transformSubmitButtonChild = (child) => {
     return React.cloneElement(child, {
       handleSubmit,
@@ -49,11 +51,8 @@ const Form = ({ children, formValidator, onSubmit, className = "" }) => {
 
   return (
     <form className={className}>
-      {React.Children.map(children, (child) => {
-        if (child.type === Input) return transformInputChild(child);
-        if (child.type === SubmitButton) return transformSubmitButtonChild(child);
-        return child;
-      })}
+      {inputChildren.map((child) => transformInputChild(child))}
+      {transformSubmitButtonChild(submitButtonChild)}
     </form>
   )
 }

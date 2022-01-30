@@ -6,8 +6,8 @@ import Table from './Table';
 
 
 const CoinsTable = () => {
-  const { data: response, isLoading } = useGetCoinsQuery();
-  const coins = response ? response : [];
+  let { data: coins, isLoading } = useGetCoinsQuery();
+  coins = coins || [];
 
   const columns = useMemo(() => [
     {
@@ -25,18 +25,28 @@ const CoinsTable = () => {
     {
       Header: 'Total',
       accessor: 'total'
+    },
+    {
+      Header: 'Market Cap',
+      accessor: 'marketCap'
+    },
+    {
+      Header: 'Cambio 24h',
+      accessor: 'dailyChange'
     }
   ], [])
 
   const data = useMemo(() => {
     return coins.map((coin) => {
-      const { symbol, amount, price, _id } = coin;
+      const { symbol, amount, price, marketCap, dailyChange, _id } = coin;
       return {
         id: _id,
         symbol,
         amount,
         price,
-        total: amount * price
+        total: amount * price,
+        marketCap,
+        dailyChange
       }
     })
   }, [coins])

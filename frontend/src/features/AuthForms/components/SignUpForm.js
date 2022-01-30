@@ -3,8 +3,11 @@ import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import validateSignUpForm from "../utils/validateSignUpForm";
 import { Link } from "react-router-dom";
-import { Form, Input, FormContainer, SubmitButton, selectUserError, resetUserError, signup } from "~/src/app";
+import { selectUserError, resetUserError, signup } from "~/src/app";
 import styles from '../styles/AuthForm.module.css'
+
+import { FormContainer, StyledForm, StyledInput, StyledSubmitButton, FormTitle, FormSubtitle, FormError } from "./StyledComponents";
+
 
 const SignUpForm = () => {
   const dispatch = useDispatch()
@@ -24,15 +27,15 @@ const SignUpForm = () => {
 
   return (
     <FormContainer className={styles.formContainer}>
-      <h2 className={styles.formTitle}>Crea tu portfolio.</h2>
-      <p className={styles.formSubtitle}>Ya tenes una cuenta? <Link to="/login">Logueate</Link></p>
-      <p className={styles.requestError}>{requestError}</p>
-      <Form formValidator={validateSignUpForm} onSubmit={handleSubmit} className={styles.form}>
-        <Input name="username" label="Username" classNames={inputClassNames} />
-        <Input name="password" label="Password" type="password" classNames={inputClassNames}/>
-        <Input name="confirmPassword" type="password" label="Confirm password" classNames={inputClassNames}/>
-        <SubmitButton className={styles.submitButton}>Sign up</SubmitButton>
-      </Form>
+      <FormTitle>Crea tu portfolio.</FormTitle>
+      <FormSubtitle>Ya tenes una cuenta? <Link to="/login">Logueate</Link></FormSubtitle>
+      <FormError>{requestError}</FormError>
+      <StyledForm formValidator={validateSignUpForm} onSubmit={handleSubmit} >
+        <StyledInput name="username" label="Username" />
+        <StyledInput name="password" label="Password" type="password" />
+        <StyledInput name="confirmPassword" type="password" label="Confirm password" />
+        <StyledSubmitButton>Sign up</StyledSubmitButton>
+      </StyledForm>
     </FormContainer>
   )
 }

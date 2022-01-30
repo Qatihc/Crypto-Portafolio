@@ -8,10 +8,9 @@ const Input = ({
   value,
   error,
   forceDisplayError,
-  classNames = {}
+  className
 }) => {
   const [displayError, setDisplayError] = useState(false);
-
   useEffect(() => {
     if (!forceDisplayError) return;
     setDisplayError(error);
@@ -29,7 +28,7 @@ const Input = ({
   return (
     <div>
       <input
-        className={`${classNames.input} ${(displayError) ? classNames.inputError : ''}`}
+        className={`${className} ${(displayError) ? 'error' : ''}`}
         name={name}
         type={type}
         aria-label={label}
@@ -38,7 +37,7 @@ const Input = ({
         value={value}
         onBlur={handleBlur}
       />
-      <p className={classNames.error}>{(displayError) ? error : ''}</p>
+      <p className='errorMsg'>{(displayError) ? error : ''}</p>
     </div>
   )
 }
