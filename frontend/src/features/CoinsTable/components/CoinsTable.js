@@ -52,7 +52,9 @@ const CoinsTable = () => {
   }, [coins])
 
   return (
-    <Table data={data} columns={columns} />
+    <div>
+      <Table data={data} columns={columns} />
+    </div>
    )
 }
 

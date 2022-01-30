@@ -101,7 +101,7 @@ const TransactionsTable = () => {
   }
 
   return (
-    <>
+    <div>
       <CreateTransactionForm />
       <TableLayout
         columns={columns}
@@ -123,7 +123,7 @@ const TransactionsTable = () => {
           {'>>'}
         </button>{' '}
       </div>
-    </>
+    </div>
   )
 }
 

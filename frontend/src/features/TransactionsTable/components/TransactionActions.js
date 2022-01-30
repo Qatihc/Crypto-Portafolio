@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { addEditRow, removeEditRow, isRowEdit, useUpdateTransactionMutation, addDeleteRow, removeDeleteRow, useDeleteTransactionMutation, isRowDelete } from '../transactionSlice';
-import styles from './TransactionActions.module.css'
+import { AiOutlineEdit, AiOutlineDelete, AiOutlineCheck, AiOutlineClose } from "react-icons/ai";
 
 const TransactionActions = ({ row }) => { 
   const [updateTransaction] = useUpdateTransactionMutation();
@@ -40,15 +40,15 @@ const TransactionActions = ({ row }) => {
   else {
     actionButtons = (
       <>
-        <button onClick={handleEditRow}>Upda</button>
-        <button onClick={handleSelectRowForDelete}>Dele</button>
+        <button onClick={handleEditRow}><AiOutlineEdit /></button>
+        <button onClick={handleSelectRowForDelete}><AiOutlineDelete /></button>
       </>
     )
   }
 
 
   return (
-    <div className={styles.actionsContainer}>
+    <div className={''}>
       {actionButtons}
     </div>
   )
@@ -57,8 +57,8 @@ const TransactionActions = ({ row }) => {
 const ConfirmAction = ({ onConfirm, onCancel }) => {
   return (
     <>
-      <button onClick={onConfirm}>si</button>
-      <button onClick={onCancel}>no</button>
+      <button onClick={onConfirm}><AiOutlineCheck /></button>
+      <button onClick={onCancel}><AiOutlineClose /></button>
     </>
   )
 }

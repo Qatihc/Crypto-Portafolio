@@ -33,7 +33,7 @@ body:global {
   --clr-accent-4:#42a5f5;
   --clr-accent-3:#64b5f6;
   --clr-accent-2:#90caf9;
-  --clr-accent-1:#bbdefb;
+  --clr-accent-1:#E8F2FD;
 
   --clr-danger-3: #b41e2a;
   --clr-danger-2: #E12636;
@@ -61,6 +61,7 @@ body:global {
 
 .mainGrid {
   display: grid;
+  overflow: hidden;
   grid-template-columns: repeat(12, 1fr);
   gap: 5px;
 }
