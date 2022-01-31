@@ -3,7 +3,7 @@ const schedule = require('node-schedule');
 
 
 const initializeCoinGeckoFetchJobs = () => {
-  let coinPrices = {};
+  let coinMarketData = {};
   let supportedCoins = {};
   let symbolToCoinGeckoId = {};
 
@@ -14,17 +14,25 @@ const initializeCoinGeckoFetchJobs = () => {
       for (coin of supportedCoins) {
         symbolToCoinGeckoId[coin.symbol.toUpperCase()] = coin.id
       }
-      console.log(supportedCoins.length);
     } catch (err) {
       console.log(err)
     }
   }
 
-  const getCoinPriceFromSymbol = (symbol) => {
+  const getCoinMarketDataFromSymbol = (symbol) => {
     const cgId = symbolToCoinGeckoId[symbol.toUpperCase()]
-    const price = coinPrices[cgId];
-    if (!price) return null;
-    return coinPrices[cgId].usd;
+    const marketData = coinMarketData[cgId];
+    const { 
+      usd: price,
+      usd_market_cap: marketCap,
+      usd_24h_change: dailyChange 
+    } = marketData
+
+    return { price, marketCap, dailyChange };
+  }
+
+  const getSupportedCoins = () => {
+    return supportedCoins;
   }
 
   const isSupportedCoin = (symbol) => {
@@ -32,11 +40,11 @@ const initializeCoinGeckoFetchJobs = () => {
     return !!symbolToCoinGeckoId[symbol.toUpperCase()];
   }
 
-  const updateCoinPrices = async () => {
+  const updateCoinMarketData = async () => {
     // Por el momento no es necesario limitar las monedas a las que les busco el precio, pero podria llegar a serlo.
     try {
       const supportedCoinIds = supportedCoins.map(c => c.id);
-      coinPrices = await fetchCoinPrices(supportedCoinIds);
+      coinMarketData = await fetchCoinPrices(supportedCoinIds);
     } catch (err) {
       console.log(err)
     }
@@ -44,13 +52,14 @@ const initializeCoinGeckoFetchJobs = () => {
 
   (async () => {
     await updateSupportedCoins();
-    await updateCoinPrices();
+    console.log(supportedCoins)
+    await updateCoinMarketData();
   })()
 
   // const jobUpdateSupportedCoins = schedule.scheduleJob('* * */1 * *', updateSupportedCoins);
   // const jobUpdateCoinPrices = schedule.scheduleJob('* * */5 * * *', updateCoinPrices);
 
-  return { getCoinPriceFromSymbol, isSupportedCoin }
+  return { getCoinMarketDataFromSymbol, isSupportedCoin, getSupportedCoins }
 }
 
 module.exports = initializeCoinGeckoFetchJobs

@@ -6,20 +6,32 @@ import { CoinsTable } from '../../features/CoinsTable';
 import { TransactionsTable } from '../../features/TransactionsTable';
 import { Navbar, OpenNavbarButton } from '../../features/Navbar';
 import styled from 'styled-components';
-
+import { devices } from '~/src/common';
 import { Route, Routes } from "react-router-dom";
 
 const TableContainer = styled.div`
-  min-width: max-content;
+  max-width: 100vw;
   grid-column: 1/-1;
   grid-row: 2;
-  background-color: red;
+  margin: 0 var(--size-5);
+  overflow-x: auto;
+  white-space: nowrap;
+  background-color: var(--clr-gray-1);
+  @media ${devices.largeScreen} {
+    grid-column: 3/-2;
+  }
 `
 
 const PageTitle = styled.h1`
-  grid-column: 2/-1;
-  text-align: center;
+  grid-column: 3/-1;
+  text-align: left;
   font-size: var(--size-5);
+  font-size: 1.4rem;
+  color: var(--clr-gray-8);
+  margin-top: var(--size-7);
+  @media ${devices.largeScreen} {
+    grid-row: 1;
+  }
 `
 
 const PortfolioPage = () => {

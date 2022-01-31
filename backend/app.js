@@ -28,11 +28,12 @@ app.use((err, req, res, next) => {
   return res.status(500).send('Internal server error.')
 })
 
-const { getCoinPriceFromSymbol, isSupportedCoin } = initializeCoinGeckoFetchJobs();
+const { getCoinMarketDataFromSymbol, isSupportedCoin, getSupportedCoins } = initializeCoinGeckoFetchJobs();
 app.locals = {
   ...app.locals,
-  getCoinPriceFromSymbol,
-  isSupportedCoin
+  getCoinMarketDataFromSymbol,
+  isSupportedCoin,
+  getSupportedCoins
 };
 
 module.exports = app;

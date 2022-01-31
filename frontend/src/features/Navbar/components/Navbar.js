@@ -9,8 +9,8 @@ import { selectNavbarOpen, close } from '../navbarSlice';
 const NavbarContainer = styled.nav`
   display: flex;
   position: absolute;
-  min-height: 100vh;
   z-index: 100;
+  min-height: 100%;
   width: var(--size-13);
   grid-row: span 2;
   grid-column: 1;
@@ -29,6 +29,7 @@ const NavbarContainer = styled.nav`
   @media ${devices.largeScreen} {
     position: initial;
     transform: translateX(0);
+    grid-row: 1/4;
   }
 `
 

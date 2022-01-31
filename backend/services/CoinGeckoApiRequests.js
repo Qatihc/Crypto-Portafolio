@@ -1,35 +1,3 @@
-/* const https = require('https')
-
-const fetchCoinDataFromCoingecko = (app) => {
-  const options = {
-    hostname: 'api.coingecko.com',
-    port: 443,
-    path: '/api/v3/coins/list',
-    method: 'GET'
-  }
-  const req = https.request(options, res => {
-    console.log(`statusCode: ${res.statusCode}`)
-
-    const buffers = []
-    res.on('data', d => {
-      buffers.push(d)
-    })
-
-    res.on('close', () => {
-      const data = Buffer.concat(buffers)
-      const parsedData = data.toString()
-      app.locals.coinsData = parsedData;
-    })
-  })
-
-  req.on('error', error => {
-    console.error(error)
-  })
-
-  req.end()
-} */
-
-
 const axios = require('axios').default;
 const axiosRetry = require('axios-retry');
 
@@ -63,7 +31,7 @@ const fetchCoinPrices = async (coinGeckoIds) => {
     axiosRetry(axios, {
       retries: 5,
       retryDelay: retryCount => {
-        console.log('retray numero ', retryCount)
+        console.log('Retry:  ', retryCount)
         return retryCount * 5000
       }
     });
@@ -82,7 +50,12 @@ const fetchCoinPrices = async (coinGeckoIds) => {
     const requests = []
     for (const ids of params) {
       const request = axios.get('https://api.coingecko.com/api/v3/simple/price',
-        {params: {ids, vs_currencies: 'usd'}}
+        {params: {
+          ids,
+          vs_currencies: 'usd',
+          include_market_cap: true,
+          include_24hr_change: true
+        }}
       )
       requests.push(request)
     }

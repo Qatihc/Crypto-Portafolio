@@ -2,15 +2,20 @@ const Portfolio = require('../models/portfolioSchema');
 const Coin = require('../models/coinSchema');
 const Transaction = require('../models/transactionSchema')
 
+const retrieveSupportedCoins = async (req, res) => {
+  console.log(req.app.locals.getSupportedCoins())
+  res.send(req.app.locals.getSupportedCoins());
+}
+
 const retrieveUserCoins = async (req, res) => {
   const { portfolio } = res.locals.user;
   const coins = await Coin
     .find({ portfolio }, 'amount symbol')
 
   const coinsWithPrice = coins.map((coin) => {
-    const price = req.app.locals.getCoinPriceFromSymbol(coin.symbol);
+    const marketData = req.app.locals.getCoinMarketDataFromSymbol(coin.symbol);
     /* Los objetos devueltos por una query de mongoose son inmutables, necesito aplicar el metodo toObject para poder modificarlo. */
-    return Object.assign(coin.toObject(), { price })
+    return Object.assign(coin.toObject(), { ...marketData })
   })
 
   res.send(coinsWithPrice);
@@ -123,10 +128,25 @@ const deleteTransactions = async (req, res, next) => {
   let { transactionId } = req.body;
   if (!Array.isArray(transactionId)) transactionId = [transactionId];
   try {
-    const deletedTransactions = await Transaction.deleteMany({ _id: { $in: transactionId } })
-    if (deletedTransactions.deletedCount === 0) {
-      res.status(400).send('La/s transaccion/es no existe/n.')
+    const transactionsToDelete = await Transaction.find({ _id: { $in: transactionId } })
+
+    /* Para minimizar la cantidad de veces que modifico cada moneda
+     agrupo todas las transacciones correspondientes a un mismo simbolo */
+    const totalAmountPerCoin = {}
+    transactionsToDelete.forEach(t => {
+      if (totalAmountPerCoin[t.symbol] === undefined) totalAmountPerCoin[t.symbol] = {amount: 0, id: t.coin};
+      totalAmountPerCoin[t.symbol].amount += t.amount
+    })
+  
+    for (const symbol in totalAmountPerCoin) {
+      const coin = await Coin.findOne({_id: totalAmountPerCoin[symbol].id})
+      coin.amount -= totalAmountPerCoin[symbol].amount
+      await coin.save()
     }
+
+    transactionsToDelete.map((transaction) => transaction.delete());
+    await Promise.all(transactionsToDelete);
+
     return res.status(200).send()
   } catch (err) {
     return next(err);
@@ -153,6 +173,7 @@ const updateTransaction = async (req, res, next) => {
 }
 
 module.exports = {
+  retrieveSupportedCoins,
   retrieveUserCoins,
   retrievePortfolioReturns,
   createTransaction,

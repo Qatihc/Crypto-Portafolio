@@ -5,6 +5,14 @@ import CreateTransactionForm from './createTransactionForm';
 import TableLayout from './TableLayout';
 import TransactionActions from './TransactionActions';
 import { useSelector } from 'react-redux';
+import { CircleDialog } from '../../CircleDialog';
+import styles from 'styled-components';
+
+const Container = styles.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`
 
 const EditableCell = ({ row, value: initialValue, column }) => {
   const columnName = column.id;
@@ -101,21 +109,24 @@ const TransactionsTable = () => {
   }
 
   return (
-    <div>
-      <CreateTransactionForm />
+    <Container>
+      <CircleDialog>
+        <CreateTransactionForm />
+      </CircleDialog>
       <TableLayout
         columns={columns}
         data={data}
         defaultColumn={defaultColumn}
       />
       <div className="pagination">
-        <div>current page {currentPage}</div>
+        
         <button onClick={() => setCurrentPage(firstPage)} disabled={!canPreviousPage}>
           {'<<'}
         </button>{' '}
         <button onClick={() => setCurrentPage(currentPage - 1)} disabled={!canPreviousPage}>
           {'<'}
         </button>{' '}
+        {currentPage} {' '}
         <button onClick={() => setCurrentPage(currentPage + 1)} disabled={!canNextPage}>
           {'qq>'}
         </button>{' '}
@@ -123,7 +134,7 @@ const TransactionsTable = () => {
           {'>>'}
         </button>{' '}
       </div>
-    </div>
+    </Container>
   )
 }
 

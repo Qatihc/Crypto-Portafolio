@@ -2,6 +2,41 @@ import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { addEditRow, removeEditRow, isRowEdit, useUpdateTransactionMutation, addDeleteRow, removeDeleteRow, useDeleteTransactionMutation, isRowDelete } from '../transactionSlice';
 import { AiOutlineEdit, AiOutlineDelete, AiOutlineCheck, AiOutlineClose } from "react-icons/ai";
+import styled from 'styled-components';
+
+
+const ConfirmAction = ({ onConfirm, onCancel }) => {
+  return (
+    <>
+      <StyledButton className='confirm' onClick={onConfirm}><AiOutlineCheck /></StyledButton>
+      <StyledButton className='cancel' onClick={onCancel}><AiOutlineClose /></StyledButton>
+    </>
+  )
+}
+
+const StyledButton = styled.button`
+  visibility: ${({ hide }) => hide ? 'hidden' : 'visible'};
+  background: none;
+  border: none;
+  font-size: 1.6rem;
+  width: 30px;
+  height: 30px;
+  color: var(--clr-gray-8);
+  cursor: pointer;
+  &.confirm {
+    color: green;
+  }
+  &.cancel {
+    color: red;
+  }
+`
+
+const ButtonContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+`
 
 const TransactionActions = ({ row }) => { 
   const [updateTransaction] = useUpdateTransactionMutation();
@@ -12,7 +47,7 @@ const TransactionActions = ({ row }) => {
   const isEdit = useSelector(isRowEdit(id));
   const isDelete = useSelector(isRowDelete(id));
 
-  if (!isHover && !isEdit && !isDelete) return null;
+  const hideButtons = (!isHover && !isEdit && !isDelete);
 
   const handleEditRow = () => {
     dispatch(addEditRow(id))
@@ -40,26 +75,17 @@ const TransactionActions = ({ row }) => {
   else {
     actionButtons = (
       <>
-        <button onClick={handleEditRow}><AiOutlineEdit /></button>
-        <button onClick={handleSelectRowForDelete}><AiOutlineDelete /></button>
+        <StyledButton hide={hideButtons} onClick={handleEditRow}><AiOutlineEdit /></StyledButton>
+        <StyledButton hide={hideButtons} onClick={handleSelectRowForDelete}><AiOutlineDelete /></StyledButton>
       </>
     )
   }
 
 
   return (
-    <div className={''}>
+    <ButtonContainer>
       {actionButtons}
-    </div>
-  )
-}
-
-const ConfirmAction = ({ onConfirm, onCancel }) => {
-  return (
-    <>
-      <button onClick={onConfirm}><AiOutlineCheck /></button>
-      <button onClick={onCancel}><AiOutlineClose /></button>
-    </>
+    </ButtonContainer>
   )
 }
 
