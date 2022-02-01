@@ -11,7 +11,7 @@ import { Route, Routes } from "react-router-dom";
 
 const TableContainer = styled.div`
   max-width: max-content;
-  overflow-y: hidden;
+  overflow: auto;
   grid-column: 1/-1;
   @media ${devices.largeScreen} {
     grid-column: 2/-1;
@@ -24,16 +24,18 @@ const PageTitle = styled.h1`
   font-size: var(--size-5);
   font-size: 1.4rem;
   color: var(--clr-gray-8);
-  margin-top: var(--size-7);
   margin-left: var(--size-5);
+  margin-top: var(--size-4);
   @media ${devices.largeScreen} {
+    margin-top: var(--size-7);
     grid-row: 1;
   }
 `
-const Test = styled.div`
+const PortfolioContainer = styled.div`
   max-width: max-content;
   margin-top: var(--size-5);
-  overflow-y: hidden;
+  overflow: auto;
+
   grid-column: 1/-1;
   @media ${devices.largeScreen} {
     grid-column: 2/-1;
@@ -50,7 +52,7 @@ const PortfolioPage = () => {
     <>
       <Navbar />
       <OpenNavbarButton />
-      <Test>
+      <PortfolioContainer>
         <Routes>
             <Route path="/coins" element={<PageTitle>Monedas</PageTitle>}/>
             <Route path="/transactions" element={<PageTitle>Transacciones</PageTitle>}/>
@@ -62,7 +64,7 @@ const PortfolioPage = () => {
             <Route path="/" element={<Navigate to="coins" />} />
           </Routes>
         </TableContainer>
-      </Test>
+      </PortfolioContainer>
     </>
   )
 }

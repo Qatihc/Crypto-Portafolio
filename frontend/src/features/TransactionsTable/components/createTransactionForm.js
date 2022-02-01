@@ -52,8 +52,9 @@ const StyledForm = styled(Form)`
 const createTransactionForm = () => {
   const [createTransaction, { isLoading }] = useCreateTransactionMutation();
 
-  const onSubmit = (formValues) => {
+  const onSubmit = (formValues, resetValues) => {
     createTransaction(formValues);
+    resetValues();
   }
 
   return (

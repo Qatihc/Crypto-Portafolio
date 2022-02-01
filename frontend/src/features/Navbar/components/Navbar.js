@@ -10,7 +10,7 @@ const NavbarContainer = styled.nav`
   display: flex;
   position: absolute;
   z-index: 100;
-  min-height: 100%;
+  height: 100%;
   width: var(--size-13);
   grid-row: span 2;
   grid-column: 1;

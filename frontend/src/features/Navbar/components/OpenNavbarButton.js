@@ -13,7 +13,7 @@ const OpenNavbarButton = ({ className }) => {
 }
 
 export default styled(OpenNavbarButton)`
-  position: absolute;
+  position: relative;
   top: var(--size-4);
   left: var(--size-2);
   background-color: none;

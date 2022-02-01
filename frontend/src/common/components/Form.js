@@ -14,7 +14,7 @@ const Form = ({ children, formValidator, onSubmit, className }) => {
   const submitButtonChild = firstChildByType(children, SubmitButton);
   const inputNames = inputChildren.map((child) => child.props.name)
   
-  const { formValues, handleInputChange } = useForm(inputNames);
+  const { formValues, resetValues, handleInputChange } = useForm(inputNames);
   /* Asumo que form validator no va a cambiar durante la ejecucion, y uso el hook condicionalmente ya que siempre ira a la misma rama. */
   const formErrors = formValidator ? useFormValidator(formValues, formValidator) : {};
   const isError = Object.values(formErrors).some(value => value);
@@ -27,7 +27,7 @@ const Form = ({ children, formValidator, onSubmit, className }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (isError) return setDisableSubmit(true);
-    return onSubmit(formValues);
+    return onSubmit(formValues, resetValues);
   }
 
   const transformInputChild = (child) => {

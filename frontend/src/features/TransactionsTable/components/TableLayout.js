@@ -29,7 +29,6 @@ const TableLayout = ({
   const getEmptyRows = () => {
     const emptyRows = [];
     const totalEmptyRows = pageSize - rows.length;
-    console.log(rows[0].getRowProps())
     for (let i = 0; i < totalEmptyRows; i++) {
       emptyRows.push(
         <TableRow>
