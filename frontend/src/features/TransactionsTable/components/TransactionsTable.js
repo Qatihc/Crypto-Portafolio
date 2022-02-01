@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { isRowEdit, useGetTransactionsCountQuery, useGetTransactionsQuery } from '../transactionSlice';
 import formatDate from '../utils/formatDate';
 import CreateTransactionForm from './createTransactionForm';
@@ -6,18 +6,15 @@ import TableLayout from './TableLayout';
 import RowActions from './RowActions';
 import { useSelector } from 'react-redux';
 import { CircleDialog } from '../../CircleDialog';
-import styles from 'styled-components';
 import EditableCell from './EditableCell';
-import { TableData, TableHeader, TableRow } from '~/src/common';
+import { TableData, TableHeader, TableRow, devices } from '~/src/common';
 import styled from 'styled-components';
 import formatNumber from '../utils/formatNumber';
 import PageSelector from './PageSelector';
 
-const Container = styles.div`
-  display: flex;
-  flex-direction: column;
+const ScrollableContainer = styled('div')`
+  overflow: auto;
 `
-
 const TransactionTableData = styled(TableData)`
   &.symbol {
     font-weight: 700;
@@ -59,20 +56,25 @@ const TransactionTableRow = styled(TableRow)`
 
 const TableActions = styled.div`
   display: flex;
+  right: 0;
   justify-content: space-between;
+  margin: var(--size-2) var(--size-5);
+`
+
+const StickyCircleDialog = styled(CircleDialog)`
 `
 
 const TransactionsTable = () => {
   const [ currentPage, setCurrentPage ] = useState(1);
-  const [ pageSize, setPageSize ] = useState(15);
+  const [ pageSize, setPageSize ] = useState(14);
 
   const { data: totalTransactions } = useGetTransactionsCountQuery();
   const { data: response, isLoading } = useGetTransactionsQuery({ pageNumber: currentPage, pageSize });
   const transactions = response ? response.transactions : [];
 
-  /* Si borro la ultima transaccion de una pagina, y hay una pagina atras de esta, paso a mostrar esta */
+  /* Si borro la ultima transaccion de una pagina, y hay una pagina atras de esta, retrocedo a ella */
   if (transactions.length === 0 && currentPage !== 1) setCurrentPage(currentPage - 1)
-  /* Type es un atributo que defini yo, usado para saber que tipo de input mostrar al modificar la celda correspondiente a cada columna. */
+
   const columns = useMemo(() => [
     {
       Header: 'Nombre',
@@ -105,7 +107,7 @@ const TransactionsTable = () => {
       canUpdate: false,
     },
     {
-      Header: 'Acciones',
+      Header: '',
       accessor: 'actions',
       Cell: ({ row }) => <RowActions row={row}/>
     }
@@ -137,16 +139,7 @@ const TransactionsTable = () => {
   }
 
   return (
-    <Container>
-      <TableLayout
-        columns={columns}
-        data={data}
-        defaultColumn={defaultColumn}
-        pageSize={pageSize}
-        TableHeader={TransactionTableHeader}
-        TableData={TransactionTableData}
-        TableRow={TransactionTableRow}
-      />
+    <>
       <TableActions>
         <PageSelector 
           pageSize={pageSize}
@@ -154,12 +147,24 @@ const TransactionsTable = () => {
           currentPage={currentPage}
           setCurrentPage={setCurrentPage}
         />
-        <CircleDialog>
+        <StickyCircleDialog buttonPosition='top'>
           <CreateTransactionForm />
-        </CircleDialog>
+        </StickyCircleDialog>
       </TableActions>
-    </Container>
+      <ScrollableContainer>
+        <TableLayout
+          columns={columns}
+          data={data}
+          defaultColumn={defaultColumn}
+          pageSize={pageSize}
+          TableHeader={TransactionTableHeader}
+          TableData={TransactionTableData}
+          TableRow={TransactionTableRow}
+        />
+      </ScrollableContainer>
+    </>
   )
 }
+
 
 export default TransactionsTable;

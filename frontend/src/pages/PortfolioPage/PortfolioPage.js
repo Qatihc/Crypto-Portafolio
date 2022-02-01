@@ -10,19 +10,11 @@ import { devices } from '~/src/common';
 import { Route, Routes } from "react-router-dom";
 
 const TableContainer = styled.div`
-  max-width: 100%;
-  display: flex;
-  border-radius: var(--size-3);
-  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+  max-width: max-content;
+  overflow: auto;
   grid-column: 1/-1;
-  grid-row: 2;
-  margin: 0 var(--size-3);
-  overflow-x: scroll;
-  white-space: nowrap;
-  background-color: var(--clr-gray-1);
   @media ${devices.largeScreen} {
-    justify-content: center;
-    grid-column: 3/-2;
+    grid-column: 2/-1;
   }
 `
 
@@ -32,9 +24,22 @@ const PageTitle = styled.h1`
   font-size: var(--size-5);
   font-size: 1.4rem;
   color: var(--clr-gray-8);
-  margin-top: var(--size-7);
+  margin-left: var(--size-5);
+  margin-top: var(--size-4);
   @media ${devices.largeScreen} {
+    margin-top: var(--size-7);
     grid-row: 1;
+  }
+`
+const PortfolioContainer = styled.div`
+  max-width: max-content;
+  margin-top: var(--size-5);
+  overflow: auto;
+
+  grid-column: 1/-1;
+  @media ${devices.largeScreen} {
+    grid-column: 2/-1;
+    margin: auto;
   }
 `
 
@@ -45,17 +50,21 @@ const PortfolioPage = () => {
 
   return (
     <>
-    <Navbar />
-    <OpenNavbarButton />
-    <Routes>
-        <Route path="/coins" element={<PageTitle>Monedas</PageTitle>}/>
-        <Route path="/transactions" element={<PageTitle>Transacciones</PageTitle>}/>
-    </Routes>
-      <Routes>
-        <Route path="/coins" element={<CoinsTable/>}/>
-        <Route path="/transactions" element={<TransactionsTable />}/>
-        <Route path="/" element={<Navigate to="coins" />} />
-      </Routes>
+      <Navbar />
+      <OpenNavbarButton />
+      <PortfolioContainer>
+        <Routes>
+            <Route path="/coins" element={<PageTitle>Monedas</PageTitle>}/>
+            <Route path="/transactions" element={<PageTitle>Transacciones</PageTitle>}/>
+        </Routes>
+        <TableContainer>
+          <Routes>
+            <Route path="/coins" element={<CoinsTable/>}/>
+            <Route path="/transactions" element={<TransactionsTable />}/>
+            <Route path="/" element={<Navigate to="coins" />} />
+          </Routes>
+        </TableContainer>
+      </PortfolioContainer>
     </>
   )
 }

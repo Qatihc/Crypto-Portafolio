@@ -38,8 +38,13 @@ const Dialog = styled.div`
   }
 `
 
-const CircleDialog = ({ className, children, size = '1rem', buttonPosition = 'bottom' }) => {
-  const [active, setActive] = useState(true);
+const CircleDialog = ({ 
+  className,
+  children,
+  size = '1rem',
+  buttonPosition = 'bottom'
+}) => {
+  const [active, setActive] = useState(false);
   const toggleActive = () => {
     setActive(!active);
   }

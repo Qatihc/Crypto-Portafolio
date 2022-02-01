@@ -28,6 +28,7 @@ const CurrentPage = styled.span`
 `
 
 const PaginationContainer = styled.nav`
+  position: sticky;
   display: flex;
   align-items: center;
   gap: 1rem;
