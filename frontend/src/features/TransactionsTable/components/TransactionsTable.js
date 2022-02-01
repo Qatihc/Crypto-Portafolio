@@ -6,18 +6,15 @@ import TableLayout from './TableLayout';
 import RowActions from './RowActions';
 import { useSelector } from 'react-redux';
 import { CircleDialog } from '../../CircleDialog';
-import styles from 'styled-components';
 import EditableCell from './EditableCell';
-import { TableData, TableHeader, TableRow } from '~/src/common';
+import { TableData, TableHeader, TableRow, devices } from '~/src/common';
 import styled from 'styled-components';
 import formatNumber from '../utils/formatNumber';
 import PageSelector from './PageSelector';
 
-const Container = styles.div`
-  display: flex;
-  flex-direction: column;
+const ScrollableContainer = styled('div')`
+  overflow: auto;
 `
-
 const TransactionTableData = styled(TableData)`
   &.symbol {
     font-weight: 700;
@@ -59,12 +56,21 @@ const TransactionTableRow = styled(TableRow)`
 
 const TableActions = styled.div`
   display: flex;
+  position: sticky;
+  right: 0;
   justify-content: space-between;
+  margin: var(--size-2) var(--size-5);
+  @media ${devices.largeScreen} {
+    order: 1;
+  }
+`
+
+const StickyCircleDialog = styled(CircleDialog)`
 `
 
 const TransactionsTable = () => {
   const [ currentPage, setCurrentPage ] = useState(1);
-  const [ pageSize, setPageSize ] = useState(15);
+  const [ pageSize, setPageSize ] = useState(14);
 
   const { data: totalTransactions } = useGetTransactionsCountQuery();
   const { data: response, isLoading } = useGetTransactionsQuery({ pageNumber: currentPage, pageSize });
@@ -137,7 +143,19 @@ const TransactionsTable = () => {
   }
 
   return (
-    <Container>
+    <>
+      <TableActions>
+        <PageSelector 
+          pageSize={pageSize}
+          elementCount={totalTransactions}
+          currentPage={currentPage}
+          setCurrentPage={setCurrentPage}
+        />
+        <StickyCircleDialog>
+          <CreateTransactionForm />
+        </StickyCircleDialog>
+      </TableActions>
+    <ScrollableContainer>
       <TableLayout
         columns={columns}
         data={data}
@@ -147,19 +165,10 @@ const TransactionsTable = () => {
         TableData={TransactionTableData}
         TableRow={TransactionTableRow}
       />
-      <TableActions>
-        <PageSelector 
-          pageSize={pageSize}
-          elementCount={totalTransactions}
-          currentPage={currentPage}
-          setCurrentPage={setCurrentPage}
-        />
-        <CircleDialog>
-          <CreateTransactionForm />
-        </CircleDialog>
-      </TableActions>
-    </Container>
+    </ScrollableContainer>
+    </>
   )
 }
+
 
 export default TransactionsTable;
