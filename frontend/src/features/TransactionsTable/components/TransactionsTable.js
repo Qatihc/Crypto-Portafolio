@@ -18,9 +18,8 @@ const Container = styles.div`
 `
 
 const TransactionTableData = styled(TableData)`
-  text-align: center;
   &.amount, &.price, &.total {
-    text-align: right;
+    justify-content: right;
   }
   &.date {
     width: 200px;
@@ -30,7 +29,7 @@ const TransactionTableData = styled(TableData)`
   }
 
   &.price::before, &.total::before {
-    content: '$ ';
+    content: '$';
   }
   /* No muestro simbolo de moneda en las celdas vacias */
   &.empty::before {
@@ -134,7 +133,7 @@ const TransactionsTable = () => {
 
   return (
     <Container>
-      <CircleDialog>
+      <CircleDialog color={'#2196f3'}>
         <CreateTransactionForm />
       </CircleDialog>
       <TableLayout

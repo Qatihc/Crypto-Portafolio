@@ -38,7 +38,7 @@ const Dialog = styled.div`
   }
 `
 
-const CircleDialog = ({ className, children, size = '1rem', buttonPosition = 'top' }) => {
+const CircleDialog = ({ className, children, size = '1rem', buttonPosition = 'top', color, backgroundColor }) => {
   const [active, setActive] = useState(false);
   const toggleActive = () => {
     setActive(!active);
@@ -46,7 +46,7 @@ const CircleDialog = ({ className, children, size = '1rem', buttonPosition = 'to
   const topOffset = (buttonPosition === 'top') ? '0' : '100%' 
   return (
     <div className={className}>
-      <AnimatedPlusIcon size={size} active={active} onClick={toggleActive} />
+      <AnimatedPlusIcon size={size} active={active} onClick={toggleActive} color={color} backgroundColor={backgroundColor} />
       <Dialog active={active} iconSize={size} buttonPosition={buttonPosition} topOffset={topOffset}>{children}</Dialog>
     </div>
   )

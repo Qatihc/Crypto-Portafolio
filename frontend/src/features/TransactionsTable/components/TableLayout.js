@@ -18,7 +18,7 @@ const TableLayout = ({
   TableRow
 }) => {
   const [hoveredRow, setHoveredRow] = useState(null);
-  const tableInstance = useTable({ columns, data, defaultColumn, minRows:10 }, useBlockLayout );
+  const tableInstance = useTable({ columns, data, defaultColumn }, useBlockLayout );
   const {
     getTableProps,
     getTableBodyProps,
@@ -30,12 +30,13 @@ const TableLayout = ({
   const getEmptyRows = () => {
     const emptyRows = [];
     const totalEmptyRows = pageSize - rows.length;
+    console.log(rows[0].getRowProps())
     for (let i = 0; i < totalEmptyRows; i++) {
       emptyRows.push(
         <TableRow>
           {headerGroups[0].headers.map((column) => (
-            <TableData {...column.getHeaderProps()} className={column.id + ' ' + 'empty'}>
-                <span>&nbsp;</span>
+            <TableData className={column.id + ' ' + 'empty'}>
+                <span></span>
             </TableData>
           ))}
         </TableRow>
@@ -51,7 +52,7 @@ const TableLayout = ({
           {headerGroups.map(headerGroup => (
             <TableRow {...headerGroup.getHeaderGroupProps()}>
               {headerGroup.headers.map((column) => (
-                <TableHeader {...column.getHeaderProps()} className={column.id}>
+                <TableHeader key={column.id} className={column.id}>
                   {column.render('Header')}
                 </TableHeader>
               ))}
@@ -68,7 +69,7 @@ const TableLayout = ({
                 {row.cells.map(cell => {
                   const cellKey = cell.column.id;
                   return(
-                    <TableData {...cell.getCellProps()} key={cellKey} className={cell.column.id}>
+                    <TableData key={cellKey} className={cell.column.id}>
                       {cell.render('Cell')}
                     </TableData>
                   )
