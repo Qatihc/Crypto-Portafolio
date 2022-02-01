@@ -11,6 +11,7 @@ import EditableCell from './EditableCell';
 import { TableData, TableHeader, TableRow } from '~/src/common';
 import styled from 'styled-components';
 import formatNumber from '../utils/formatNumber';
+import PageSelector from './PageSelector';
 
 const Container = styles.div`
   display: flex;
@@ -121,11 +122,6 @@ const TransactionsTable = () => {
 
 
   if (isLoading) return '...cargando...';
-
-  const firstPage = 1;
-  const lastPage = Math.ceil(totalTransactions / pageSize);
-  const canPreviousPage = currentPage > firstPage;
-  const canNextPage = currentPage < lastPage;
   
   const defaultColumn = {
     Cell: ({ row, value, column }) => (column.canUpdate && useSelector(isRowEdit(row.original.id))) ? <EditableCell row={row} value={value} column={column} /> : value
@@ -145,22 +141,12 @@ const TransactionsTable = () => {
         TableData={TransactionTableData}
         TableRow={TransactionTableRow}
       />
-      <div className="pagination">
-        
-        <button onClick={() => setCurrentPage(firstPage)} disabled={!canPreviousPage}>
-          {'<<'}
-        </button>{' '}
-        <button onClick={() => setCurrentPage(currentPage - 1)} disabled={!canPreviousPage}>
-          {'<'}
-        </button>{' '}
-        {currentPage} {' '}
-        <button onClick={() => setCurrentPage(currentPage + 1)} disabled={!canNextPage}>
-          {'qq>'}
-        </button>{' '}
-        <button onClick={() => setCurrentPage(lastPage)} disabled={!canNextPage}>
-          {'>>'}
-        </button>{' '}
-      </div>
+      <PageSelector 
+        pageSize={pageSize}
+        elementCount={totalTransactions}
+        currentPage={currentPage}
+        setCurrentPage={setCurrentPage}
+      />
     </Container>
   )
 }

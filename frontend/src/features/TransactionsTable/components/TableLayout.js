@@ -17,7 +17,6 @@ const TableLayout = ({
   TableData,
   TableRow
 }) => {
-  const [hoveredRow, setHoveredRow] = useState(null);
   const tableInstance = useTable({ columns, data, defaultColumn }, useBlockLayout );
   const {
     getTableProps,
@@ -47,7 +46,7 @@ const TableLayout = ({
 
   return (
     <>
-      <Table {...getTableProps()} onMouseLeave={() => setHoveredRow(null)}>
+      <Table {...getTableProps()}>
         <thead>
           {headerGroups.map(headerGroup => (
             <TableRow {...headerGroup.getHeaderGroupProps()}>
@@ -62,10 +61,9 @@ const TableLayout = ({
         <tbody {...getTableBodyProps()}>
           {rows.map(row => {
             prepareRow(row)
-            row.isHover = hoveredRow === row.id
             const rowKey = row.original.id;
             return (
-              <TableRow {...row.getRowProps()} key={rowKey} onMouseEnter={() => setHoveredRow(row.id)}>
+              <TableRow {...row.getRowProps()} key={rowKey}>
                 {row.cells.map(cell => {
                   const cellKey = cell.column.id;
                   return(

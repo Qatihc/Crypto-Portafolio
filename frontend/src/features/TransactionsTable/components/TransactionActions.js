@@ -42,11 +42,8 @@ const TransactionActions = ({ row }) => {
   const [deleteTransaction] = useDeleteTransactionMutation();
   const dispatch = useDispatch();
   const { id } = row.original;
-  const isHover = row.isHover;
   const isEdit = useSelector(isRowEdit(id));
   const isDelete = useSelector(isRowDelete(id));
-
-  const hideButtons = (!isHover && !isEdit && !isDelete);
 
   const handleEditRow = () => {
     dispatch(addEditRow(id))
@@ -74,8 +71,8 @@ const TransactionActions = ({ row }) => {
   else {
     actionButtons = (
       <>
-        <StyledButton hide={hideButtons} onClick={handleEditRow}><AiOutlineEdit /></StyledButton>
-        <StyledButton hide={hideButtons} onClick={handleSelectRowForDelete}><AiOutlineDelete /></StyledButton>
+        <StyledButton onClick={handleEditRow}><AiOutlineEdit /></StyledButton>
+        <StyledButton onClick={handleSelectRowForDelete}><AiOutlineDelete /></StyledButton>
       </>
     )
   }
