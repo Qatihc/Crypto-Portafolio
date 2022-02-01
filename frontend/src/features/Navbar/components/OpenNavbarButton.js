@@ -13,11 +13,13 @@ const OpenNavbarButton = ({ className }) => {
 }
 
 export default styled(OpenNavbarButton)`
+  position: absolute;
+  top: var(--size-4);
+  left: var(--size-2);
   background-color: none;
   border: none;
   background: transparent;
   width: 3rem;
-
   @media ${devices.largeScreen} {
     display: none;
   }

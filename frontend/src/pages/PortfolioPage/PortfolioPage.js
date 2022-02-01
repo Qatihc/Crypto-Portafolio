@@ -14,7 +14,7 @@ const TableContainer = styled.div`
   overflow-y: hidden;
   grid-column: 1/-1;
   @media ${devices.largeScreen} {
-    grid-column: 3/-2;
+    grid-column: 2/-1;
   }
 `
 
@@ -25,8 +25,19 @@ const PageTitle = styled.h1`
   font-size: 1.4rem;
   color: var(--clr-gray-8);
   margin-top: var(--size-7);
+  margin-left: var(--size-5);
   @media ${devices.largeScreen} {
     grid-row: 1;
+  }
+`
+const Test = styled.div`
+  max-width: max-content;
+  margin-top: var(--size-5);
+  overflow-y: hidden;
+  grid-column: 1/-1;
+  @media ${devices.largeScreen} {
+    grid-column: 2/-1;
+    margin: auto;
   }
 `
 
@@ -39,17 +50,19 @@ const PortfolioPage = () => {
     <>
       <Navbar />
       <OpenNavbarButton />
-      <Routes>
-          <Route path="/coins" element={<PageTitle>Monedas</PageTitle>}/>
-          <Route path="/transactions" element={<PageTitle>Transacciones</PageTitle>}/>
-      </Routes>
-      <TableContainer>
+      <Test>
         <Routes>
-          <Route path="/coins" element={<CoinsTable/>}/>
-          <Route path="/transactions" element={<TransactionsTable />}/>
-          <Route path="/" element={<Navigate to="coins" />} />
+            <Route path="/coins" element={<PageTitle>Monedas</PageTitle>}/>
+            <Route path="/transactions" element={<PageTitle>Transacciones</PageTitle>}/>
         </Routes>
-      </TableContainer>
+        <TableContainer>
+          <Routes>
+            <Route path="/coins" element={<CoinsTable/>}/>
+            <Route path="/transactions" element={<TransactionsTable />}/>
+            <Route path="/" element={<Navigate to="coins" />} />
+          </Routes>
+        </TableContainer>
+      </Test>
     </>
   )
 }
