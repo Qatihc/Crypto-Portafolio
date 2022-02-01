@@ -20,8 +20,12 @@ const StyledButton = styled.button`
   font-size: 1.6rem;
   width: 30px;
   height: 30px;
-  color: var(--clr-gray-6);
+  color: var(--clr-gray-5);
   cursor: pointer;
+  transition: all .3s ease-in-out;
+  &:hover {
+    color: var(--clr-accent-7);
+  }
   &.confirm {
     color: var(--clr-accent-5);
   }
@@ -37,7 +41,7 @@ const ButtonContainer = styled.div`
   gap: var(--size-5);
 `
 
-const TransactionActions = ({ row }) => { 
+const RowActions = ({ row }) => { 
   const [updateTransaction] = useUpdateTransactionMutation();
   const [deleteTransaction] = useDeleteTransactionMutation();
   const dispatch = useDispatch();
@@ -85,4 +89,4 @@ const TransactionActions = ({ row }) => {
   )
 }
 
-export default TransactionActions;
+export default RowActions;

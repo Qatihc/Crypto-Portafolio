@@ -3,7 +3,7 @@ import { isRowEdit, useGetTransactionsCountQuery, useGetTransactionsQuery } from
 import formatDate from '../utils/formatDate';
 import CreateTransactionForm from './createTransactionForm';
 import TableLayout from './TableLayout';
-import TransactionActions from './TransactionActions';
+import RowActions from './RowActions';
 import { useSelector } from 'react-redux';
 import { CircleDialog } from '../../CircleDialog';
 import styles from 'styled-components';
@@ -19,6 +19,10 @@ const Container = styles.div`
 `
 
 const TransactionTableData = styled(TableData)`
+  &.symbol {
+    font-weight: 700;
+  }
+
   &.amount, &.price, &.total {
     justify-content: right;
   }
@@ -51,6 +55,11 @@ const TransactionTableHeader = styled(TableHeader)`
 `
 
 const TransactionTableRow = styled(TableRow)`
+`
+
+const TableActions = styled.div`
+  display: flex;
+  justify-content: space-between;
 `
 
 const TransactionsTable = () => {
@@ -98,7 +107,7 @@ const TransactionsTable = () => {
     {
       Header: 'Acciones',
       accessor: 'actions',
-      Cell: ({ row }) => <TransactionActions row={row}/>
+      Cell: ({ row }) => <RowActions row={row}/>
     }
   ], [])
 
@@ -129,9 +138,6 @@ const TransactionsTable = () => {
 
   return (
     <Container>
-      <CircleDialog color={'#2196f3'}>
-        <CreateTransactionForm />
-      </CircleDialog>
       <TableLayout
         columns={columns}
         data={data}
@@ -141,12 +147,17 @@ const TransactionsTable = () => {
         TableData={TransactionTableData}
         TableRow={TransactionTableRow}
       />
-      <PageSelector 
-        pageSize={pageSize}
-        elementCount={totalTransactions}
-        currentPage={currentPage}
-        setCurrentPage={setCurrentPage}
-      />
+      <TableActions>
+        <PageSelector 
+          pageSize={pageSize}
+          elementCount={totalTransactions}
+          currentPage={currentPage}
+          setCurrentPage={setCurrentPage}
+        />
+        <CircleDialog>
+          <CreateTransactionForm />
+        </CircleDialog>
+      </TableActions>
     </Container>
   )
 }

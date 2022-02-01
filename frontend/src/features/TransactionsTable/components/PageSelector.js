@@ -12,14 +12,19 @@ const LeftArrow = styled(RightArrow)`
 
 const PaginationButton = styled.button`
   background-color: transparent;
-  width: var(--size-6);
-  height: var(--size-6);
+  width: var(--size-5);
+  height: var(--size-5);
   border: none;
-  font-size: var(--size-6);
+  font-size: var(--size-5);
   cursor: pointer;
+  color: var(--clr-gray-9);
+  &:disabled {
+    color: var(--clr-gray-5);
+  }
 `
 const CurrentPage = styled.span`
-  font-size: var(--size-6);
+  font-size: var(--size-5);
+  color: var(--clr-gray-9);
 `
 
 const PaginationContainer = styled.nav`
