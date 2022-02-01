@@ -1,34 +1,24 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { useTable } from 'react-table'
+import { useBlockLayout, useTable } from 'react-table'
+import { devices } from '~/src/common';
 
 const Table = styled.table`
-  display: block;
-  font-size: 1rem;
-  height: 100%
-`
-const Tr = styled.tr`
-  transition: all .3s ease-in-out;
-  &:hover {
-    box-shadow: 
-      0 1px 3px hsla(0, 0%, 0%, .2);
-  }
-
+  border-collapse: collapse;
+  table-layout: fixed;
 `
 
-const Thead = styled.thead`
-  background-color: var(--clr-accent-10);
-  color: var(--clr-gray-3);
-`
-
-const Td = styled.td`
-  text-align: end;
-  padding: 0 3rem;
-`
-
-const TableLayout = ({ columns, data, defaultColumn, rowProps }) => {
+const TableLayout = ({ 
+  columns,
+  data,
+  defaultColumn,
+  pageSize,
+  TableHeader,
+  TableData,
+  TableRow
+}) => {
   const [hoveredRow, setHoveredRow] = useState(null);
-  const tableInstance = useTable({ columns, data, defaultColumn });
+  const tableInstance = useTable({ columns, data, defaultColumn, minRows:10 }, useBlockLayout );
   const {
     getTableProps,
     getTableBodyProps,
@@ -37,38 +27,56 @@ const TableLayout = ({ columns, data, defaultColumn, rowProps }) => {
     prepareRow,
   } = tableInstance
 
+  const getEmptyRows = () => {
+    const emptyRows = [];
+    const totalEmptyRows = pageSize - rows.length;
+    for (let i = 0; i < totalEmptyRows; i++) {
+      emptyRows.push(
+        <TableRow>
+          {headerGroups[0].headers.map((column) => (
+            <TableData {...column.getHeaderProps()} className={column.id + ' ' + 'empty'}>
+                <span>&nbsp;</span>
+            </TableData>
+          ))}
+        </TableRow>
+      )
+    }
+    return emptyRows
+  }
+
   return (
     <>
       <Table {...getTableProps()} onMouseLeave={() => setHoveredRow(null)}>
-        <Thead>
+        <thead>
           {headerGroups.map(headerGroup => (
-            <Tr {...headerGroup.getHeaderGroupProps()}>
-              {headerGroup.headers.map(column => (
-                <th {...column.getHeaderProps()}>
+            <TableRow {...headerGroup.getHeaderGroupProps()}>
+              {headerGroup.headers.map((column) => (
+                <TableHeader {...column.getHeaderProps()} className={column.id}>
                   {column.render('Header')}
-                </th>
+                </TableHeader>
               ))}
-            </Tr>
+            </TableRow>
           ))}
-        </Thead>
+        </thead>
         <tbody {...getTableBodyProps()}>
           {rows.map(row => {
             prepareRow(row)
             row.isHover = hoveredRow === row.id
             const rowKey = row.original.id;
             return (
-              <Tr {...row.getRowProps(rowProps)} key={rowKey} onMouseEnter={() => setHoveredRow(row.id)}>
+              <TableRow {...row.getRowProps()} key={rowKey} onMouseEnter={() => setHoveredRow(row.id)}>
                 {row.cells.map(cell => {
                   const cellKey = cell.column.id;
                   return(
-                    <Td {...cell.getCellProps()} key={cellKey}>
+                    <TableData {...cell.getCellProps()} key={cellKey} className={cell.column.id}>
                       {cell.render('Cell')}
-                    </Td>
+                    </TableData>
                   )
                 })}
-              </Tr>
+              </TableRow>
             )
           })}
+          {getEmptyRows()}
         </tbody>
       </Table>
     </>

@@ -15,19 +15,18 @@ const ConfirmAction = ({ onConfirm, onCancel }) => {
 }
 
 const StyledButton = styled.button`
-  visibility: ${({ hide }) => hide ? 'hidden' : 'visible'};
   background: none;
   border: none;
   font-size: 1.6rem;
   width: 30px;
   height: 30px;
-  color: var(--clr-gray-8);
+  color: var(--clr-gray-6);
   cursor: pointer;
   &.confirm {
-    color: green;
+    color: var(--clr-accent-5);
   }
   &.cancel {
-    color: red;
+    color: var(--clr-danger-2);
   }
 `
 
@@ -35,7 +34,7 @@ const ButtonContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 1rem;
+  gap: var(--size-5);
 `
 
 const TransactionActions = ({ row }) => { 

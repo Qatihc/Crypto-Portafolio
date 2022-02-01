@@ -10,11 +10,12 @@ import { devices } from '~/src/common';
 import { Route, Routes } from "react-router-dom";
 
 const TableContainer = styled.div`
-  max-width: 100vw;
+  max-width: 100%;
+  border-radius: var(--size-3);
+  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
   grid-column: 1/-1;
   grid-row: 2;
-  margin: 0 var(--size-5);
-  overflow-x: auto;
+  margin: 0 var(--size-2);
   white-space: nowrap;
   background-color: var(--clr-gray-1);
   @media ${devices.largeScreen} {

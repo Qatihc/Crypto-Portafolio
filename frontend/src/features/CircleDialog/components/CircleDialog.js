@@ -7,8 +7,8 @@ const AnimatedPlusIcon = styled(PlusIcon)`
   position: relative;
   z-index: 2;
   transition: 
-    transform .5s linear,
-    background-color .5s ease-in-out;
+    transform .3s linear,
+    background-color .3s ease-in-out;
   
   ${
     ({ active }) => active ?
@@ -26,8 +26,7 @@ const Dialog = styled.div`
   }
 
   right: 0;
-  background-color: turquoise;
-  transition: all 1s ease-in-out;
+  transition: all .3s ease-in-out;
   ${
     ({ active, iconSize, topOffset }) => active ?
     `
