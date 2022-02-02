@@ -6,6 +6,8 @@ import { devices } from '~/src/common';
 const Table = styled.table`
   border-collapse: collapse;
   table-layout: fixed;
+  border-radius: 50px;
+  border: 4px solid var(--clr-gray-3);
 `
 
 const TableLayout = ({ 

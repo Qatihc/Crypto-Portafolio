@@ -36,22 +36,6 @@ const NavbarContainer = styled.nav`
   }
 `
 
-const NavbarTop = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-left: var(--size-6);
-  gap: var(--size-6);
-`
-
-const UserGreeting = styled.p`
-  margin: var(--size-5) 0;
-  text-align: left;
-  width: 100%;
-  font-size: var(--size-5);
-  color: var(--clr-gray-6);
-`
-
 const CloseNavbarOnClickOutside = styled.div`
   position: absolute;
   z-index: 99;
@@ -71,6 +55,30 @@ const CloseNavbarOnClickOutside = styled.div`
   @media ${devices.largeScreen} {
     opacity: 0;
   }
+`
+
+const NavbarTop = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-left: var(--size-6);
+  gap: var(--size-6);
+`
+
+const UserGreeting = styled.p`
+  margin: var(--size-5) 0;
+  text-align: left;
+  width: 100%;
+  font-size: var(--size-5);
+  color: var(--clr-gray-6);
+`
+
+const LinksList = styled.ul`
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-3);
+  width: 100%;
+  list-style: none;
 `
 
 const LinkContainer = styled.li`
@@ -99,16 +107,6 @@ const StyledLink = styled(NavLink)`
   }
 
   transition: all .25s ease-in-out;
-`
-
-
-
-const LinksList = styled.ul`
-  display: flex;
-  flex-direction: column;
-  gap: var(--size-3);
-  width: 100%;
-  list-style: none;
 `
 
 const Navbar = () => {
