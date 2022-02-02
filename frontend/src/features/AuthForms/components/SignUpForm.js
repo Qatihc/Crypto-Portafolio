@@ -17,14 +17,8 @@ const SignUpForm = () => {
     dispatch(signup(formValues));
   }
 
-  const inputClassNames = {
-    input: styles.input,
-    error: styles.error,
-    inputError: styles.inputError
-  }
-
   return (
-    <FormContainer className={styles.formContainer}>
+    <FormContainer>
       <FormTitle>Crea tu portfolio.</FormTitle>
       <FormSubtitle>Ya tenes una cuenta? <Link to="/login">Logueate</Link></FormSubtitle>
       <FormError>{requestError}</FormError>

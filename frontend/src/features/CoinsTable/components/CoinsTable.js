@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 import { useGetCoinsQuery } from '../coinSlice';
-import { TableData, TableHeader, TableRow, TableLayout, devices, formatNumber } from '~/src/common';
+import { TableData, TableHeader, TableRow, TableLayout, CoinNameCell, devices, formatNumber } from '~/src/common';
 
 import Table from './Table';
 import styled from 'styled-components';
@@ -12,12 +12,6 @@ const StyledTableRow = styled(TableRow)`
   }
 `
 
-const StyledTableData = styled(TableData)`
-  &.symbol {
-    font-weight: 700;
-  }  
-`
-
 const CoinsTable = () => {
   let { data: coins, isLoading } = useGetCoinsQuery();
   coins = coins || [];
@@ -25,7 +19,8 @@ const CoinsTable = () => {
   const columns = useMemo(() => [
     {
       Header: 'Nombre',
-      accessor: 'symbol'
+      accessor: 'symbol',
+      Cell: ({ row }) => <CoinNameCell row={row}/>
     },
     {
       Header: 'Cantidad',
@@ -51,7 +46,7 @@ const CoinsTable = () => {
 
   const data = useMemo(() => {
     return coins.map((coin) => {
-      let { symbol, amount, price, marketCap, dailyChange, _id } = coin;
+      let { symbol, name, amount, price, marketCap, dailyChange, _id } = coin;
       const total = formatNumber(amount * price);
       amount = formatNumber(amount);
       price = formatNumber(price);
@@ -60,6 +55,7 @@ const CoinsTable = () => {
       return {
         id: _id,
         symbol,
+        name,
         amount,
         price,
         total,
@@ -75,7 +71,7 @@ const CoinsTable = () => {
         data={data}
         columns={columns}
         TableHeader={TableHeader}
-        TableData={StyledTableData}
+        TableData={TableData}
         TableRow={StyledTableRow}
         pageSize={13}
         />

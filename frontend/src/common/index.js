@@ -5,6 +5,7 @@ import TableData from "./components/TableData";
 import TableHeader from "./components/TableHeader";
 import TableLayout from "./components/TableLayout"
 import TableRow from "./components/TableRow";
+import CoinNameCell from "./components/CoinNameCell";
 
 import { STATUS, devices } from "./constants";
 
@@ -31,5 +32,6 @@ export {
   TableData,
   TableRow,
   formatNumber,
-  formatDate
+  formatDate,
+  CoinNameCell
 }

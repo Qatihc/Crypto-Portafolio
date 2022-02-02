@@ -5,7 +5,7 @@ import RowActions from './RowActions';
 import { useSelector } from 'react-redux';
 import { CircleDialog } from '../../CircleDialog';
 import EditableCell from './EditableCell';
-import { TableData, TableHeader, TableRow, TableLayout, devices, formatNumber, formatDate } from '~/src/common';
+import { TableData, TableHeader, TableRow, TableLayout, CoinNameCell, devices, formatNumber, formatDate } from '~/src/common';
 import styled from 'styled-components';
 import PageSelector from './PageSelector';
 
@@ -13,10 +13,6 @@ const ScrollableContainer = styled('div')`
   overflow: auto;
 `
 const TransactionTableData = styled(TableData)`
-  &.symbol {
-    font-weight: 700;
-  }
-
   &.amount, &.price, &.total {
     justify-content: right;
   }
@@ -34,6 +30,7 @@ const TransactionTableData = styled(TableData)`
   &.empty::before {
     content: '';
   }
+
 `
 const TransactionTableHeader = styled(TableHeader)`
   text-align: center;
@@ -77,7 +74,8 @@ const TransactionsTable = () => {
       Header: 'Nombre',
       accessor: 'symbol',
       type: 'text',
-      canUpdate: false
+      canUpdate: false,
+      Cell: ({ row }) => <CoinNameCell row={row}/>
     },
     {
       Header: 'Cantidad',
@@ -112,7 +110,7 @@ const TransactionsTable = () => {
 
   const data = useMemo(() => {
     return transactions.map((coin) => {
-      let { symbol, amount, price, date, _id } = coin;
+      let { symbol, amount, price, date, name, _id } = coin;
       const total = formatNumber(amount * price);
       amount = formatNumber(amount);
       price = formatNumber(price);
@@ -120,6 +118,7 @@ const TransactionsTable = () => {
       return {
         id: _id,
         symbol,
+        name,
         amount,
         price,
         date,

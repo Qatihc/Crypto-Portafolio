@@ -5,6 +5,7 @@ import { useCreateTransactionMutation } from '../transactionSlice';
 
 const FormContainer = styled.div`
   display: flex;
+  max-width: 90vw;
   flex-direction: column;
   gap: var(--size-6);
   padding: var(--size-7);
@@ -21,6 +22,7 @@ const FormTitle = styled.h3`
 
 const StyledInput = styled(Input)`
   border: none;
+  max-width: 75vw;
   background-color: var(--clr-gray-1);
   border-radius: 5px;
   box-shadow: 1px -1px var(--clr-gray-3);
