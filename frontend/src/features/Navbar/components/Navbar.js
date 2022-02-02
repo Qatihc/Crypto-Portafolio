@@ -5,7 +5,7 @@ import { NavLink } from "react-router-dom";
 import styled from 'styled-components';
 import { devices } from '~/src/common/constants';
 import { selectNavbarOpen, close } from '../navbarSlice';
-import { FaBitcoin, FaWallet } from "react-icons/fa";
+import { FaBitcoin, FaWallet, FaDoorOpen } from "react-icons/fa";
 
 
 const NavbarContainer = styled.nav`
@@ -20,6 +20,7 @@ const NavbarContainer = styled.nav`
   background-color: var(--clr-gray-1);
   flex-direction: column;
   justify-content: space-between;
+  align-items: center;
   transition: all .5s ease-in-out;
   ${({ isOpen }) => isOpen ?
   `
@@ -61,7 +62,6 @@ const NavbarTop = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-left: var(--size-6);
   gap: var(--size-6);
 `
 
@@ -86,13 +86,16 @@ const LinkContainer = styled.li`
   gap: var(--size-3);
   align-items: center;
   justify-content: flex-start;
-  font-size: 1.2rem;
   & svg {
     color: var(--clr-gray-6);
   }
 `
 
 const StyledLink = styled(NavLink)`
+  background: transparent;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
   &, &:active, &:focus, &:hover {
     text-decoration: none;
     color: var(--clr-gray-9);
@@ -107,6 +110,9 @@ const StyledLink = styled(NavLink)`
   }
 
   transition: all .25s ease-in-out;
+`
+const LogoutContainer = styled(LinkContainer)`
+  margin-bottom: var(--size-6);
 `
 
 const Navbar = () => {
@@ -135,7 +141,10 @@ const Navbar = () => {
           </LinkContainer>
         </LinksList>
       </NavbarTop>
-      <button onClick={handleLogout}>logout</button>
+      <LogoutContainer as="div">
+        <FaDoorOpen size={25}/>
+        <StyledLink as="button" onClick={handleLogout}>Cerrar sesion</StyledLink>
+      </LogoutContainer>
     </NavbarContainer>
     </>
   )
