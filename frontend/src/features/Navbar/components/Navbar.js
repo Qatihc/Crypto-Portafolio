@@ -5,16 +5,19 @@ import { Link } from "react-router-dom";
 import styled from 'styled-components';
 import { devices } from '~/src/common/constants';
 import { selectNavbarOpen, close } from '../navbarSlice';
+import { FaBitcoin, FaWallet } from "react-icons/fa";
+
 
 const NavbarContainer = styled.nav`
   display: flex;
   position: absolute;
   z-index: 100;
+  border-right: 2px solid var(--clr-gray-3);
   height: 100%;
   width: var(--size-13);
   grid-row: span 2;
   grid-column: 1;
-  background-color: var(--clr-gray-5);
+  background-color: var(--clr-gray-1);
   flex-direction: column;
   justify-content: space-between;
   transition: all .5s ease-in-out;
@@ -41,11 +44,13 @@ const NavbarTop = styled.div`
 `
 
 const UserGreeting = styled.p`
-  text-align: center;
   margin: var(--size-5) 0;
+  text-align: center;
+  font-size: var(--size-5);
+  color: var(--clr-gray-6);
 `
 
-const Test = styled.div`
+const CloseNavbarOnClickOutside = styled.div`
   position: absolute;
   z-index: 99;
   min-width: 100vw;
@@ -66,6 +71,26 @@ const Test = styled.div`
   }
 `
 
+const LinkContainer = styled.li`
+  display: flex;
+  gap: var(--size-3);
+  align-items: center;
+  justify-content: flex-start;
+  font-size: 1.2rem;
+  & svg {
+    color: var(--clr-gray-7);
+  }
+`
+
+const LinksList = styled.ul`
+  display: flex;
+  margin-top: var(--size-5);
+  flex-direction: column;
+  gap: var(--size-3);
+  width: 80%;
+  list-style: none;
+`
+
 const Navbar = () => {
   const currentUser = useSelector(selectCurrentUser);
   const isOpen = useSelector(selectNavbarOpen);
@@ -76,12 +101,20 @@ const Navbar = () => {
   }
   return (
     <>
-    <Test onClick={() => dispatch(close())} isOpen={isOpen} />
+    <CloseNavbarOnClickOutside onClick={() => dispatch(close())} isOpen={isOpen} />
     <NavbarContainer isOpen={isOpen}>
       <NavbarTop>
         <UserGreeting>Bienvenido <br/>{currentUser}</UserGreeting>
-        <Link to="coins" onClick={() => dispatch(close())}>Monedas</Link>
-        <Link to="transactions" onClick={() => dispatch(close())}>Transacciones</Link>
+        <LinksList>
+          <LinkContainer>
+            <FaBitcoin />
+            <Link to="coins" onClick={() => dispatch(close())}>Monedas</Link>
+          </LinkContainer>
+          <LinkContainer>
+            <FaWallet />
+            <Link to="transactions" onClick={() => dispatch(close())}>Transacciones</Link>
+          </LinkContainer>
+        </LinksList>
       </NavbarTop>
       <button onClick={handleLogout}>logout</button>
     </NavbarContainer>

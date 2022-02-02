@@ -21,7 +21,7 @@ const transactionApi = api.injectEndpoints({
           params: { offset, limit: pageSize },
         })
       },
-      providesTags: (result, error, { pageNumber, pageSize}) => [{ type: 'transactions', id: `${pageNumber};${pageSize}`}] 
+      providesTags: (result, error, { pageNumber, pageSize }) => [{ type: 'transactions', id: `${pageNumber};${pageSize}`}] 
     }),
 
     createTransaction: build.mutation({

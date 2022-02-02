@@ -1,9 +1,22 @@
 import React, { useEffect, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 import { useGetCoinsQuery } from '../coinSlice';
+import { TableData, TableHeader, TableRow, TableLayout, devices, formatNumber } from '~/src/common';
 
 import Table from './Table';
+import styled from 'styled-components';
 
+const StyledTableRow = styled(TableRow)`
+  &:nth-child(2n) {
+    background-color: hsl(46, 84%, 91%);
+  }
+`
+
+const StyledTableData = styled(TableData)`
+  &.symbol {
+    font-weight: 700;
+  }  
+`
 
 const CoinsTable = () => {
   let { data: coins, isLoading } = useGetCoinsQuery();
@@ -38,13 +51,18 @@ const CoinsTable = () => {
 
   const data = useMemo(() => {
     return coins.map((coin) => {
-      const { symbol, amount, price, marketCap, dailyChange, _id } = coin;
+      let { symbol, amount, price, marketCap, dailyChange, _id } = coin;
+      const total = formatNumber(amount * price);
+      amount = formatNumber(amount);
+      price = formatNumber(price);
+      marketCap = formatNumber(marketCap);
+      dailyChange = formatNumber(dailyChange);
       return {
         id: _id,
         symbol,
         amount,
         price,
-        total: amount * price,
+        total,
         marketCap,
         dailyChange
       }
@@ -53,7 +71,14 @@ const CoinsTable = () => {
 
   return (
     <div>
-      <Table data={data} columns={columns} />
+      <TableLayout 
+        data={data}
+        columns={columns}
+        TableHeader={TableHeader}
+        TableData={StyledTableData}
+        TableRow={StyledTableRow}
+        pageSize={13}
+        />
     </div>
    )
 }
