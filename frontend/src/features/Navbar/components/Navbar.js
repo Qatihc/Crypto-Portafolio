@@ -1,7 +1,7 @@
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { selectCurrentUser, logout } from '~/src/common';
-import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import styled from 'styled-components';
 import { devices } from '~/src/common/constants';
 import { selectNavbarOpen, close } from '../navbarSlice';
@@ -40,12 +40,14 @@ const NavbarTop = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--size-3);
+  margin-left: var(--size-6);
+  gap: var(--size-6);
 `
 
 const UserGreeting = styled.p`
   margin: var(--size-5) 0;
-  text-align: center;
+  text-align: left;
+  width: 100%;
   font-size: var(--size-5);
   color: var(--clr-gray-6);
 `
@@ -78,16 +80,34 @@ const LinkContainer = styled.li`
   justify-content: flex-start;
   font-size: 1.2rem;
   & svg {
-    color: var(--clr-gray-7);
+    color: var(--clr-gray-6);
   }
 `
 
+const StyledLink = styled(NavLink)`
+  &, &:active, &:focus, &:hover {
+    text-decoration: none;
+    color: var(--clr-gray-9);
+  }
+
+  &.active {
+    color: var(--clr-accent-7);
+  }
+
+  &:hover {
+    color: var(--clr-accent-3);
+  }
+
+  transition: all .25s ease-in-out;
+`
+
+
+
 const LinksList = styled.ul`
   display: flex;
-  margin-top: var(--size-5);
   flex-direction: column;
   gap: var(--size-3);
-  width: 80%;
+  width: 100%;
   list-style: none;
 `
 
@@ -99,6 +119,7 @@ const Navbar = () => {
   const handleLogout = () => {
     dispatch(logout())
   }
+
   return (
     <>
     <CloseNavbarOnClickOutside onClick={() => dispatch(close())} isOpen={isOpen} />
@@ -108,11 +129,11 @@ const Navbar = () => {
         <LinksList>
           <LinkContainer>
             <FaBitcoin />
-            <Link to="coins" onClick={() => dispatch(close())}>Monedas</Link>
+            <StyledLink to="coins" onClick={() => dispatch(close())}>Monedas</StyledLink>
           </LinkContainer>
           <LinkContainer>
             <FaWallet />
-            <Link to="transactions" onClick={() => dispatch(close())}>Transacciones</Link>
+            <StyledLink to="transactions" onClick={() => dispatch(close())}>Transacciones</StyledLink>
           </LinkContainer>
         </LinksList>
       </NavbarTop>
