@@ -6,11 +6,11 @@ import TableHeader from "./components/TableHeader";
 import TableLayout from "./components/TableLayout"
 import TableRow from "./components/TableRow";
 
-
 import { STATUS, devices } from "./constants";
 
 import store from "./store";
 import { logout, signup, login, resetUserError, selectCurrentUser, selectUserError } from "./user/userSlice";
+import { formatNumber, formatDate } from "./utils/formatUtils";
 
 
 export {
@@ -29,5 +29,7 @@ export {
   selectUserError,
   TableHeader,
   TableData,
-  TableRow
+  TableRow,
+  formatNumber,
+  formatDate
 }

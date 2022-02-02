@@ -1,22 +1,26 @@
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { selectCurrentUser, logout } from '~/src/common';
-import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import styled from 'styled-components';
 import { devices } from '~/src/common/constants';
 import { selectNavbarOpen, close } from '../navbarSlice';
+import { FaBitcoin, FaWallet, FaDoorOpen } from "react-icons/fa";
+
 
 const NavbarContainer = styled.nav`
   display: flex;
   position: absolute;
   z-index: 100;
+  border-right: 2px solid var(--clr-gray-3);
   height: 100%;
   width: var(--size-13);
   grid-row: span 2;
   grid-column: 1;
-  background-color: var(--clr-gray-5);
+  background-color: var(--clr-gray-1);
   flex-direction: column;
   justify-content: space-between;
+  align-items: center;
   transition: all .5s ease-in-out;
   ${({ isOpen }) => isOpen ?
   `
@@ -33,19 +37,7 @@ const NavbarContainer = styled.nav`
   }
 `
 
-const NavbarTop = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--size-3);
-`
-
-const UserGreeting = styled.p`
-  text-align: center;
-  margin: var(--size-5) 0;
-`
-
-const Test = styled.div`
+const CloseNavbarOnClickOutside = styled.div`
   position: absolute;
   z-index: 99;
   min-width: 100vw;
@@ -66,6 +58,63 @@ const Test = styled.div`
   }
 `
 
+const NavbarTop = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--size-6);
+`
+
+const UserGreeting = styled.p`
+  margin: var(--size-5) 0;
+  text-align: left;
+  width: 100%;
+  font-size: var(--size-5);
+  color: var(--clr-gray-6);
+`
+
+const LinksList = styled.ul`
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-3);
+  width: 100%;
+  list-style: none;
+`
+
+const LinkContainer = styled.li`
+  display: flex;
+  gap: var(--size-3);
+  align-items: center;
+  justify-content: flex-start;
+  & svg {
+    color: var(--clr-gray-6);
+  }
+`
+
+const StyledLink = styled(NavLink)`
+  background: transparent;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  &, &:active, &:focus, &:hover {
+    text-decoration: none;
+    color: var(--clr-gray-9);
+  }
+
+  &.active {
+    color: var(--clr-accent-7);
+  }
+
+  &:hover {
+    color: var(--clr-accent-3);
+  }
+
+  transition: all .25s ease-in-out;
+`
+const LogoutContainer = styled(LinkContainer)`
+  margin-bottom: var(--size-6);
+`
+
 const Navbar = () => {
   const currentUser = useSelector(selectCurrentUser);
   const isOpen = useSelector(selectNavbarOpen);
@@ -74,16 +123,28 @@ const Navbar = () => {
   const handleLogout = () => {
     dispatch(logout())
   }
+
   return (
     <>
-    <Test onClick={() => dispatch(close())} isOpen={isOpen} />
+    <CloseNavbarOnClickOutside onClick={() => dispatch(close())} isOpen={isOpen} />
     <NavbarContainer isOpen={isOpen}>
       <NavbarTop>
         <UserGreeting>Bienvenido <br/>{currentUser}</UserGreeting>
-        <Link to="coins" onClick={() => dispatch(close())}>Monedas</Link>
-        <Link to="transactions" onClick={() => dispatch(close())}>Transacciones</Link>
+        <LinksList>
+          <LinkContainer>
+            <FaBitcoin />
+            <StyledLink to="coins" onClick={() => dispatch(close())}>Monedas</StyledLink>
+          </LinkContainer>
+          <LinkContainer>
+            <FaWallet />
+            <StyledLink to="transactions" onClick={() => dispatch(close())}>Transacciones</StyledLink>
+          </LinkContainer>
+        </LinksList>
       </NavbarTop>
-      <button onClick={handleLogout}>logout</button>
+      <LogoutContainer as="div">
+        <FaDoorOpen size={25}/>
+        <StyledLink as="button" onClick={handleLogout}>Cerrar sesion</StyledLink>
+      </LogoutContainer>
     </NavbarContainer>
     </>
   )

@@ -1,15 +1,12 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { isRowEdit, useGetTransactionsCountQuery, useGetTransactionsQuery } from '../transactionSlice';
-import formatDate from '../utils/formatDate';
 import CreateTransactionForm from './createTransactionForm';
-import TableLayout from './TableLayout';
 import RowActions from './RowActions';
 import { useSelector } from 'react-redux';
 import { CircleDialog } from '../../CircleDialog';
 import EditableCell from './EditableCell';
-import { TableData, TableHeader, TableRow, devices } from '~/src/common';
+import { TableData, TableHeader, TableRow, TableLayout, devices, formatNumber, formatDate } from '~/src/common';
 import styled from 'styled-components';
-import formatNumber from '../utils/formatNumber';
 import PageSelector from './PageSelector';
 
 const ScrollableContainer = styled('div')`
@@ -66,7 +63,7 @@ const StickyCircleDialog = styled(CircleDialog)`
 
 const TransactionsTable = () => {
   const [ currentPage, setCurrentPage ] = useState(1);
-  const [ pageSize, setPageSize ] = useState(14);
+  const [ pageSize, setPageSize ] = useState(13);
 
   const { data: totalTransactions } = useGetTransactionsCountQuery();
   const { data: response, isLoading } = useGetTransactionsQuery({ pageNumber: currentPage, pageSize });

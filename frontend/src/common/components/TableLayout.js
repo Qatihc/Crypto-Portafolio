@@ -1,8 +1,25 @@
-import React from 'react';
-import { useTable } from 'react-table'
+import React, { useState } from 'react';
+import styled from 'styled-components';
+import { useBlockLayout, useTable } from 'react-table'
+import { devices } from '~/src/common';
 
-const TableLayout = ({ columns, data}) => {
-  const tableInstance = useTable({columns, data});
+const Table = styled.table`
+  border-collapse: collapse;
+  table-layout: fixed;
+  border-radius: 50px;
+  border: 4px solid var(--clr-gray-3);
+`
+
+const TableLayout = ({ 
+  columns,
+  data,
+  defaultColumn,
+  pageSize,
+  TableHeader,
+  TableData,
+  TableRow
+}) => {
+  const tableInstance = useTable({ columns, data, defaultColumn }, useBlockLayout );
   const {
     getTableProps,
     getTableBodyProps,
@@ -11,39 +28,57 @@ const TableLayout = ({ columns, data}) => {
     prepareRow,
   } = tableInstance
 
+  const getEmptyRows = () => {
+    const emptyRows = [];
+    const totalEmptyRows = pageSize - rows.length;
+    for (let i = 0; i < totalEmptyRows; i++) {
+      emptyRows.push(
+        <TableRow>
+          {headerGroups[0].headers.map((column) => (
+            <TableData className={column.id + ' ' + 'empty'}>
+                <span></span>
+            </TableData>
+          ))}
+        </TableRow>
+      )
+    }
+    return emptyRows
+  }
+
   return (
     <>
-      <table {...getTableProps()}>
+      <Table {...getTableProps()}>
         <thead>
           {headerGroups.map(headerGroup => (
-            <tr {...headerGroup.getHeaderGroupProps()}>
-              {headerGroup.headers.map(column => (
-                <th {...column.getHeaderProps()}>
+            <TableRow {...headerGroup.getHeaderGroupProps()}>
+              {headerGroup.headers.map((column) => (
+                <TableHeader key={column.id} className={column.id}>
                   {column.render('Header')}
-                </th>
+                </TableHeader>
               ))}
-            </tr>
+            </TableRow>
           ))}
         </thead>
         <tbody {...getTableBodyProps()}>
           {rows.map(row => {
             prepareRow(row)
+            const rowKey = row.original.id;
             return (
-              <>
-              <tr {...row.getRowProps()}>
+              <TableRow {...row.getRowProps()} key={rowKey}>
                 {row.cells.map(cell => {
-                  return (
-                    <td {...cell.getCellProps()}>
+                  const cellKey = cell.column.id;
+                  return(
+                    <TableData key={cellKey} className={cell.column.id}>
                       {cell.render('Cell')}
-                    </td>
+                    </TableData>
                   )
                 })}
-              </tr>
-              </>
+              </TableRow>
             )
           })}
+          {getEmptyRows()}
         </tbody>
-      </table>
+      </Table>
     </>
   )
 }
