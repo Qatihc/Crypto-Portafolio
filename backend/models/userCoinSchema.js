@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const CoinSchema = new Schema({
+const UserCoinSchema = new Schema({
   portfolio: {
     type: Schema.ObjectId,
     ref: 'Portfolio'
@@ -18,5 +18,5 @@ const CoinSchema = new Schema({
   }
 })
 
-const Coin = mongoose.model('Coin', CoinSchema);
-module.exports = Coin;
+const UserCoin = mongoose.model('UserCoin', UserCoinSchema);
+module.exports = UserCoin;

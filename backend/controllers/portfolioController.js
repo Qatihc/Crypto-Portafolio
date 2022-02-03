@@ -1,15 +1,25 @@
 const Portfolio = require('../models/portfolioSchema');
-const Coin = require('../models/coinSchema');
+const UserCoin = require('../models/userCoinSchema');
 const Transaction = require('../models/transactionSchema')
 const CoinMarketData = require('../models/coinMarketDataSchema');
 const { COIN_MIN_AMOUNT_TO_DISPLAY } = require('../constants');
+
+const retrieveUserCoinsCount = async (req, res, next) => {
+  const { portfolio } = res.locals.user;
+  try {
+    const count = await UserCoin.countDocuments({ portfolio });
+    return res.send({ count });
+  } catch (err) {
+    return next(err);
+  }
+}
 
 const retrieveUserCoins = async (req, res) => {
   const { offset = 0, limit = 20} = req.query;
   const { portfolio } = res.locals.user;
 
-  let coins = await Coin
-    .find({ portfolio })
+  let coins = await UserCoin
+    .find({ portfolio, amount: { $gt: COIN_MIN_AMOUNT_TO_DISPLAY } })
     .skip(Number(offset))
     .limit(Number(limit))
     .populate('coinMarketData', '-_id dailyChange marketCap price coinGeckoId')
@@ -27,17 +37,8 @@ const retrieveUserCoins = async (req, res) => {
 const retrieveTransactionsCount = async (req, res, next) => {
   const { portfolio } = res.locals.user;
   try {
-    const transactionsCount = await Transaction.aggregate([
-      {
-        $match: { portfolio }
-      },
-      {
-        $count: "totalTransactions"
-      }
-    ])
-
-    /* Aggregate devuelve el resultado como un array de un solo elemento */
-    return res.send(transactionsCount[0]);
+    const count = await Transaction.countDocuments({ portfolio });
+    return res.send({ count });
   } catch (err) {
     return next(err);
   }
@@ -48,36 +49,13 @@ const retrieveTransactions = async (req, res, next) => {
   if (offset < 0) return res.status(401).send('Invalid offset');
   const { portfolio } = res.locals.user;
 
-  const transactionsData = await Transaction.aggregate([
-    { 
-      $match: { portfolio }
-    },
-    {
-      $sort: { date: -1 },
-    },
-    { $facet: 
-      {
-        totalTransactions: [{$count: "totalTransactions"}],
-        transactions: [
-          {
-            $skip: Number(offset)
-          },
-          {
-            $limit: Number(limit),
-          }
-        ]
-      }
-    },
-    {
-      $project: {
-        transactions: "$transactions",
-        totalTransactions: { "$arrayElemAt": [ "$totalTransactions.totalTransactions", 0 ]}
-      }
-    }
-  ])
-
+  const transactions = await Transaction
+    .find({ portfolio })
+    .skip(Number(offset))
+    .limit(Number(limit))
+    .lean()
   /* El aggregate devuelve el resultado como un array de un solo elemento */
-  return res.send(transactionsData[0]);
+  return res.send(transactions);
 }
 
 const retrievePortfolioReturns = (req, res) => {
@@ -105,9 +83,9 @@ const createTransaction = async (req, res, next) => {
   const name = coinMarketData.name;
 
   try {
-    let coinWithSameSymbol = await Coin.findOne({ portfolio, symbol });
+    let coinWithSameSymbol = await UserCoin.findOne({ portfolio, symbol });
     if (!coinWithSameSymbol) {
-      coinWithSameSymbol = await Coin.create({ 
+      coinWithSameSymbol = await UserCoin.create({ 
         portfolio,
         symbol,
         name,
@@ -150,7 +128,7 @@ const deleteTransactions = async (req, res, next) => {
     })
   
     for (const symbol in totalAmountPerCoin) {
-      const coin = await Coin.findOne({_id: totalAmountPerCoin[symbol].id})
+      const coin = await UserCoin.findOne({_id: totalAmountPerCoin[symbol].id})
       coin.amount -= totalAmountPerCoin[symbol].amount
       await coin.save()
     }
@@ -190,5 +168,6 @@ module.exports = {
   deleteTransactions,
   updateTransaction,
   retrieveTransactions,
-  retrieveTransactionsCount
+  retrieveTransactionsCount,
+  retrieveUserCoinsCount
 };

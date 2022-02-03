@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
-const Coin = require('./coinSchema')
+const UserCoin = require('./userCoinSchema')
 const ObjectId = require('mongoose').Types.ObjectId;
 
 const TransactionSchema = new Schema({
@@ -23,7 +23,7 @@ const TransactionSchema = new Schema({
   },
   coin: {
     type: Schema.ObjectId,
-    ref: 'Coin'
+    ref: 'UserCoin'
   },
   portfolio: {
     type: Schema.ObjectId,
@@ -44,7 +44,7 @@ const updateCoinAmount = async function(next) {
     const transactionToUpdate = await Transaction.findOne(this.getQuery());
     const newAmount = this._update.amount;
     const oldAmount = transactionToUpdate.amount;
-    await Coin.updateOne(
+    await UserCoin.updateOne(
       {
         _id: transactionToUpdate.coin
       },
