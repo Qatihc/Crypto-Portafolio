@@ -1,55 +1,25 @@
 const Portfolio = require('../models/portfolioSchema');
 const Coin = require('../models/coinSchema');
 const Transaction = require('../models/transactionSchema')
+const CoinMarketData = require('../models/coinMarketDataSchema');
 const { COIN_MIN_AMOUNT_TO_DISPLAY } = require('../constants');
-
-const retrieveSupportedCoins = async (req, res) => {
-  console.log(req.app.locals.getSupportedCoins())
-  res.send(req.app.locals.getSupportedCoins());
-}
 
 const retrieveUserCoins = async (req, res) => {
   const { offset = 0, limit = 20} = req.query;
   const { portfolio } = res.locals.user;
-/*   let coins = await Coin
-    .find(
-      {
-        portfolio: portfolio,
-        amount: { $gte: COIN_MIN_AMOUNT_TO_DISPLAY },
-      },
-      'amount symbol name'
-    ) */
 
-  let coins = await Coin.aggregate([
-    { 
-      $match: { portfolio }
-    },
-    { $facet: 
-      {
-        count: [{$count: "count"}],
-        coins: [
-          {
-            $skip: Number(offset)
-          },
-          {
-            $limit: Number(limit),
-          }
-        ]
-      }
-    },
-    {
-      $project: {
-        coins: "$coins",
-        count: { "$arrayElemAt": [ "$count.count", 0 ]}
-      }
-    }
-  ])
-
-/*   coins = coins.map((coin) => {
-    const marketData = req.app.locals.getCoinMarketDataFromSymbol(coin.symbol); */
-    /* Los objetos devueltos por una query de mongoose son inmutables, necesito aplicar el metodo toObject para poder modificarlo. */
-/*     return Object.assign(coin.toObject(), { ...marketData })
-  }) */
+  let coins = await Coin
+    .find({ portfolio })
+    .skip(Number(offset))
+    .limit(Number(limit))
+    .populate('coinMarketData', '-_id dailyChange marketCap price coinGeckoId')
+    .lean()
+  
+  coins = coins.map((coin) => ({
+    ...coin,
+    ...coin.coinMarketData,
+    coinMarketData: undefined
+  }))
 
   res.send(coins);
 }
@@ -121,20 +91,30 @@ const createTransaction = async (req, res, next) => {
     price,
     date = Date.now() 
   } = req.body;
+  if (!amount) return res.status(400).send('La cantidad debe ser distinta de 0.');
+
   amount = parseFloat(amount);
   symbol = symbol.toUpperCase();
-  const name = req.app.locals.getCoinNameFromSymbol(symbol);
   const { portfolio } = res.locals.user;
 
-  if (!req.app.locals.isSupportedCoin(symbol)) return res.status(400).send('Symbolo invalido.');
-  if (!amount) return res.status(400).send('La cantidad debe ser distinta de 0.');
+  // Hay monedas que copian el simbolo de otras, para intentar evitar elegir alguna de estas
+  // si existen varias con el mismo simbolo elijo la que mas market cap tenga.
+
+  const coinMarketData = await CoinMarketData.findOne({ symbol }, null, { sort: { marketCap: -1 } });
+  if (!coinMarketData) return res.status(400).send('Simbolo invalido o moneda no soportada.');
+  const name = coinMarketData.name;
 
   try {
     let coinWithSameSymbol = await Coin.findOne({ portfolio, symbol });
     if (!coinWithSameSymbol) {
-      coinWithSameSymbol = await Coin.create({ portfolio, symbol, name });
-      console.log(coinWithSameSymbol, name)
+      coinWithSameSymbol = await Coin.create({ 
+        portfolio,
+        symbol,
+        name,
+        coinMarketData: coinMarketData.id 
+      });
     }
+
     const transaction = new Transaction({ 
       symbol,
       name,
@@ -204,7 +184,6 @@ const updateTransaction = async (req, res, next) => {
 }
 
 module.exports = {
-  retrieveSupportedCoins,
   retrieveUserCoins,
   retrievePortfolioReturns,
   createTransaction,

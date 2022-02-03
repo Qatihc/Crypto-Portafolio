@@ -1,7 +1,6 @@
 const portfolioRouter = require('express').Router();
 const { requireAuth, optionalAuth } = require('../controllers/authController');
 const {
-  retrieveSupportedCoins,
   retrieveUserCoins,
   retrievePortfolioReturns,
   createTransaction,
@@ -11,7 +10,6 @@ const {
   retrieveTransactionsCount
 } = require('../controllers/portfolioController');
 
-portfolioRouter.get('/supportedCoins', optionalAuth, retrieveSupportedCoins);
 portfolioRouter.get('/returns', requireAuth, retrievePortfolioReturns);
 portfolioRouter.get('/coins', requireAuth, retrieveUserCoins);
 portfolioRouter.get('/transaction', requireAuth, retrieveTransactions);
