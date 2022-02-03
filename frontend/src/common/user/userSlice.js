@@ -1,18 +1,20 @@
 import { createSlice, createAsyncThunk, isAnyOf } from "@reduxjs/toolkit";
 import userApi from "./userApi";
 import { STATUS } from "../constants";
+import { getCurrentUser, saveCurrentUser, deleteCurrentUser } from "./persistUser";
+
 
 const userSlice = createSlice({
   name: 'user',
   initialState: {
-    currentUser: localStorage.getItem('currentUser') || null,
-    token: localStorage.getItem('token') || null,
+    username: getCurrentUser().username || null,
+    token: getCurrentUser().token || null,
     status: STATUS.IDLE,
     errorMsg: null,
   },
   reducers: {
     logout: state => {
-      state.currentUser = null;
+      state.username = null;
       state.token = null;
       return state;
     },
@@ -23,9 +25,9 @@ const userSlice = createSlice({
   extraReducers(builder) {
     builder
       .addCase(login.fulfilled, (state, action) => {
-        const { currentUser, token } = action.payload;
+        const { username, token } = action.payload;
         state.status = STATUS.SUCCESS,
-        state.currentUser = currentUser;
+        state.username = username;
         state.token = token;
       })
       .addCase(signup.fulfilled, (state, action) => {
@@ -43,10 +45,10 @@ const userSlice = createSlice({
 })
 
 const login = createAsyncThunk('user/login', async (requestBody) => {
-  const data = await userApi.login(requestBody);
+  const { username, token } = await userApi.login(requestBody);
   return {
-    currentUser: data.username,
-    token: data.token
+    username,
+    token
   };
 })
 
@@ -56,7 +58,7 @@ const signup = createAsyncThunk('user/signup', async (requestBody) => {
 })
 
 export const selectCurrentUser = (state) => {
-  return state.user.currentUser;
+  return state.user.username;
 }
 
 export const selectUserError = (state) => {
@@ -64,14 +66,11 @@ export const selectUserError = (state) => {
 }
 
 export const persistUserMiddleware = store => next => action => {
-  /* Cambiar esto que se va a romper muy facil */
   if (action.type === "user/login/fulfilled") {
-    localStorage.setItem('currentUser', action.payload.currentUser);
-    localStorage.setItem('token', action.payload.token);
+    saveCurrentUser(action.payload);
   }
   else if (action.type === "user/logout") {
-    localStorage.removeItem('currentUser');
-    localStorage.removeItem('token');
+    deleteCurrentUser();
   }
   return next(action);
 }

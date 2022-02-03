@@ -17,7 +17,8 @@ const StyledForm = styled(Form)`
 `
 
 const StyledInput = styled(Input)`
-  margin: 0 var(--size-6);
+  width: 90%;
+  margin: 0 5%;
   border: none;
   padding: 1rem;
   font-size: 1rem;
@@ -29,8 +30,8 @@ const StyledInput = styled(Input)`
     border: 1px solid var(--clr-danger-2);
   }
   & + .errorMsg {
+    margin: 0 5%;
     color: var(--clr-danger-2);
-    margin: 0 var(--size-6);
   }
   // Si el mensaje de error esta vacio, muestro un espacio 
   // para reservar el lugar que ocuparia el mensaje
@@ -45,12 +46,12 @@ const StyledSubmitButton = styled(SubmitButton)`
   padding: 1rem;
   font-size: 1.2rem;
   border-radius: 0 0 10px 10px;
-  background-color: var(--clr-accent-12);
+  background-color: var(--clr-accent-9);
   cursor: pointer;
   transition: all ease-in-out .2s;
 
   &:hover, &:focus {
-    background-color: var(--clr-accent-10);
+    background-color: var(--clr-accent-7);
   }
   &:disabled {
     background-color: var(--clr-gray-7);
