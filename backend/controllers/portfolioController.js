@@ -1,6 +1,7 @@
 const Portfolio = require('../models/portfolioSchema');
 const Coin = require('../models/coinSchema');
 const Transaction = require('../models/transactionSchema')
+const { COIN_MIN_AMOUNT_TO_DISPLAY } = require('../constants');
 
 const retrieveSupportedCoins = async (req, res) => {
   console.log(req.app.locals.getSupportedCoins())
@@ -8,17 +9,49 @@ const retrieveSupportedCoins = async (req, res) => {
 }
 
 const retrieveUserCoins = async (req, res) => {
+  const { offset = 0, limit = 20} = req.query;
   const { portfolio } = res.locals.user;
-  const coins = await Coin
-    .find({ portfolio }, 'amount symbol')
+/*   let coins = await Coin
+    .find(
+      {
+        portfolio: portfolio,
+        amount: { $gte: COIN_MIN_AMOUNT_TO_DISPLAY },
+      },
+      'amount symbol name'
+    ) */
 
-  const coinsWithPrice = coins.map((coin) => {
-    const marketData = req.app.locals.getCoinMarketDataFromSymbol(coin.symbol);
+  let coins = await Coin.aggregate([
+    { 
+      $match: { portfolio }
+    },
+    { $facet: 
+      {
+        count: [{$count: "count"}],
+        coins: [
+          {
+            $skip: Number(offset)
+          },
+          {
+            $limit: Number(limit),
+          }
+        ]
+      }
+    },
+    {
+      $project: {
+        coins: "$coins",
+        count: { "$arrayElemAt": [ "$count.count", 0 ]}
+      }
+    }
+  ])
+
+/*   coins = coins.map((coin) => {
+    const marketData = req.app.locals.getCoinMarketDataFromSymbol(coin.symbol); */
     /* Los objetos devueltos por una query de mongoose son inmutables, necesito aplicar el metodo toObject para poder modificarlo. */
-    return Object.assign(coin.toObject(), { ...marketData })
-  })
+/*     return Object.assign(coin.toObject(), { ...marketData })
+  }) */
 
-  res.send(coinsWithPrice);
+  res.send(coins);
 }
 
 const retrieveTransactionsCount = async (req, res, next) => {
@@ -41,17 +74,13 @@ const retrieveTransactionsCount = async (req, res, next) => {
 }
 
 const retrieveTransactions = async (req, res, next) => {
-  const { symbol, offset = 0, limit = 20} = req.query;
+  const { offset = 0, limit = 20} = req.query;
   if (offset < 0) return res.status(401).send('Invalid offset');
-  
   const { portfolio } = res.locals.user;
-  const match = (symbol) ?
-    ({ symbol, portfolio }) :
-    ({ portfolio });
 
   const transactionsData = await Transaction.aggregate([
     { 
-      $match: match 
+      $match: { portfolio }
     },
     {
       $sort: { date: -1 },
@@ -64,7 +93,7 @@ const retrieveTransactions = async (req, res, next) => {
             $skip: Number(offset)
           },
           {
-            $limit: +limit,
+            $limit: Number(limit),
           }
         ]
       }
@@ -94,6 +123,7 @@ const createTransaction = async (req, res, next) => {
   } = req.body;
   amount = parseFloat(amount);
   symbol = symbol.toUpperCase();
+  const name = req.app.locals.getCoinNameFromSymbol(symbol);
   const { portfolio } = res.locals.user;
 
   if (!req.app.locals.isSupportedCoin(symbol)) return res.status(400).send('Symbolo invalido.');
@@ -102,11 +132,12 @@ const createTransaction = async (req, res, next) => {
   try {
     let coinWithSameSymbol = await Coin.findOne({ portfolio, symbol });
     if (!coinWithSameSymbol) {
-      coinWithSameSymbol = await Coin.create({ symbol, portfolio });
+      coinWithSameSymbol = await Coin.create({ portfolio, symbol, name });
+      console.log(coinWithSameSymbol, name)
     }
-
     const transaction = new Transaction({ 
       symbol,
+      name,
       amount,
       price,
       date,

@@ -4,6 +4,7 @@ const RequestError = require('./utils/errorTypes/RequestError');
 const User = require('../models/userSchema');
 const Portfolio = require('../models/portfolioSchema');
 const { validationResult } = require('express-validator');
+const inputErrorMessages = require('./validator/errorMessages');
 
 const findJwtUser = (token) => {
   return new Promise(async (resolve, reject) => {

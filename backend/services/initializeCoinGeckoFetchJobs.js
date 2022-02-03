@@ -1,50 +1,46 @@
 const {fetchSupportedCoinsList, fetchCoinPrices}  = require('./CoinGeckoApiRequests')
 const schedule = require('node-schedule');
-
+const CoinMarketData = require('../models/coinMarketDataSchema');
 
 const initializeCoinGeckoFetchJobs = () => {
   let coinMarketData = {};
   let supportedCoins = {};
-  let symbolToCoinGeckoId = {};
+  let symbolToCoinDetails = {};
 
   const updateSupportedCoins = async () => {
     try {
       supportedCoins = await fetchSupportedCoinsList();
-      /* Creo esta estructura para poder encontra la id en O(1) */
-      for (coin of supportedCoins) {
-        symbolToCoinGeckoId[coin.symbol.toUpperCase()] = coin.id
-      }
+      const coinsToInsert = supportedCoins.map((coin) => ({ coinGeckoId: coin.id, name: coin.name, symbol: coin.symbol }));
+      /* Inserto todos los elementos. Como coinGeckoId es un indice unico no insertara duplicados. */
+      await CoinMarketData.insertMany(coinsToInsert, { ordered: false });
     } catch (err) {
-      console.log(err)
+      const DUPLICATED_KEY_CODE = 11000
+      if (err.code === DUPLICATED_KEY_CODE) return;
+      console.log(err);
     }
   }
 
-  const getCoinMarketDataFromSymbol = (symbol) => {
-    const cgId = symbolToCoinGeckoId[symbol.toUpperCase()]
-    const marketData = coinMarketData[cgId];
-    const { 
-      usd: price,
-      usd_market_cap: marketCap,
-      usd_24h_change: dailyChange 
-    } = marketData
-
-    return { price, marketCap, dailyChange };
-  }
-
-  const getSupportedCoins = () => {
-    return supportedCoins;
-  }
-
-  const isSupportedCoin = (symbol) => {
-    /* Si no tiene id no esta soportada */
-    return !!symbolToCoinGeckoId[symbol.toUpperCase()];
-  }
-
   const updateCoinMarketData = async () => {
-    // Por el momento no es necesario limitar las monedas a las que les busco el precio, pero podria llegar a serlo.
     try {
-      const supportedCoinIds = supportedCoins.map(c => c.id);
-      coinMarketData = await fetchCoinPrices(supportedCoinIds);
+      const supportedCoins = await CoinMarketData.find({}, 'coinGeckoId', { lean: true });
+      const supportedCoinsIds = supportedCoins.map((coin) => coin.coinGeckoId);
+      const coinsMarketData = await fetchCoinPrices(supportedCoinsIds);
+
+      await CoinMarketData.bulkWrite(supportedCoins.map(coin => {
+        const { coinGeckoId } = coin;
+        const coinData = coinsMarketData[coinGeckoId]
+        const update = {};
+        update.price = coinData.usd;
+        update.marketCap = coinData.usd_market_cap;
+        update.dailyChange = coinData.usd_24h_change;
+        return { 
+          updateOne: {
+            filter: { coinGeckoId },
+            update,
+            upsert: true,
+          }
+        }
+      }))
     } catch (err) {
       console.log(err)
     }
@@ -52,14 +48,10 @@ const initializeCoinGeckoFetchJobs = () => {
 
   (async () => {
     await updateSupportedCoins();
-    console.log(supportedCoins)
     await updateCoinMarketData();
+    const jobUpdateSupportedCoins = schedule.scheduleJob('* * */1 * *', updateSupportedCoins);
+    const jobUpdateCoinPrices = schedule.scheduleJob('* * */5 * * *', updateCoinMarketData);
   })()
-
-  // const jobUpdateSupportedCoins = schedule.scheduleJob('* * */1 * *', updateSupportedCoins);
-  // const jobUpdateCoinPrices = schedule.scheduleJob('* * */5 * * *', updateCoinPrices);
-
-  return { getCoinMarketDataFromSymbol, isSupportedCoin, getSupportedCoins }
 }
 
 module.exports = initializeCoinGeckoFetchJobs

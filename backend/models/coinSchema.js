@@ -6,10 +6,15 @@ const CoinSchema = new Schema({
     type: Schema.ObjectId,
     ref: 'Portfolio'
   },
+  name: String,
   symbol: String,
   amount: {
     type: Number,
     default: 0,
+  },
+  coinMarketData: {
+    type: Schema.ObjectId,
+    ref: 'CoinMarketData'
   }
 })
 

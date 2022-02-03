@@ -8,6 +8,7 @@ const TransactionSchema = new Schema({
     type: String,
     required: true,
   },
+  name: String,
   date: {
     type: Date,
     required: true,
@@ -37,8 +38,6 @@ TransactionSchema.virtual('total').get(function(){
 TransactionSchema.virtual('side').get(function(){
   return this.amount >= 0 ? 'buy' : 'sell';
 });
-
-
 
 const updateCoinAmount = async function(next) {
   if (this._update.amount) {
