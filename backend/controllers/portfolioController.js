@@ -7,7 +7,7 @@ const { COIN_MIN_AMOUNT_TO_DISPLAY } = require('../constants');
 const retrieveUserCoinsCount = async (req, res, next) => {
   const { portfolio } = res.locals.user;
   try {
-    const count = await UserCoin.countDocuments({ portfolio });
+    const count = await UserCoin.countDocuments({ portfolio, amount: { $gt: COIN_MIN_AMOUNT_TO_DISPLAY } });
     return res.send({ count });
   } catch (err) {
     return next(err);
@@ -51,14 +51,16 @@ const retrieveTransactions = async (req, res, next) => {
 
   const transactions = await Transaction
     .find({ portfolio })
+    .sort({ date: -1 })
     .skip(Number(offset))
     .limit(Number(limit))
     .lean()
-  /* El aggregate devuelve el resultado como un array de un solo elemento */
+
   return res.send(transactions);
 }
 
 const retrievePortfolioReturns = (req, res) => {
+  /* TO DO */
   res.send(res.locals.user.username);
 }
 
@@ -76,7 +78,7 @@ const createTransaction = async (req, res, next) => {
   const { portfolio } = res.locals.user;
 
   // Hay monedas que copian el simbolo de otras, para intentar evitar elegir alguna de estas
-  // si existen varias con el mismo simbolo elijo la que mas market cap tenga.
+  // si existen varias con el mismo simbolo elijo la que mas market cap tenga. 
 
   const coinMarketData = await CoinMarketData.findOne({ symbol }, null, { sort: { marketCap: -1 } });
   if (!coinMarketData) return res.status(400).send('Simbolo invalido o moneda no soportada.');

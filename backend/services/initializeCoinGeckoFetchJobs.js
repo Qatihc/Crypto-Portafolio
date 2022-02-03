@@ -44,12 +44,8 @@ const initializeCoinGeckoFetchJobs = () => {
     }
   };
 
-  (async () => {
-    await updateSupportedCoins();
-    await updateCoinMarketData();
-    const jobUpdateSupportedCoins = schedule.scheduleJob('* * */1 * *', updateSupportedCoins);
-    const jobUpdateCoinPrices = schedule.scheduleJob('* * */5 * * *', updateCoinMarketData);
-  })()
+ // const jobUpdateSupportedCoins = schedule.scheduleJob('* * */1 * *', updateSupportedCoins);
+ // const jobUpdateCoinPrices = schedule.scheduleJob('* * */5 * * *', updateCoinMarketData);
 }
 
 module.exports = initializeCoinGeckoFetchJobs
