@@ -1,13 +1,12 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import { isRowEdit, useGetTransactionsCountQuery, useGetTransactionsQuery } from '../transactionSlice';
 import CreateTransactionForm from './createTransactionForm';
 import RowActions from './RowActions';
 import { useSelector } from 'react-redux';
 import { CircleDialog } from '../../CircleDialog';
 import EditableCell from './EditableCell';
-import { TableData, TableHeader, TableRow, TableLayout, CoinNameCell, devices, formatNumber, formatDate, DEFAULT_PAGE_SIZE, ScrollableContainer, TableActions } from '~/src/common';
+import { TableData, TableHeader, TableRow, TableLayout, CoinNameCell, formatNumber, formatDate, DEFAULT_PAGE_SIZE, ScrollableContainer, TableActions, PageSelector } from '~/src/common';
 import styled from 'styled-components';
-import PageSelector from './PageSelector';
 
 
 const TransactionTableData = styled(TableData)`

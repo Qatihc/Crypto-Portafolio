@@ -19,7 +19,7 @@ const EditableCell = ({ row, value: initialValue, column, className }) => {
     setValue(e.target.value)
   }
 
-  return <input className={className} type={type} value={value} onChange={handleChange}/>
+  return <input className={className} type={type} value={value} onChange={handleChange} />
 }
 
 export default styled(EditableCell)`

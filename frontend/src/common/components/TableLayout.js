@@ -33,9 +33,9 @@ const TableLayout = ({
     const totalEmptyRows = pageSize - rows.length;
     for (let i = 0; i < totalEmptyRows; i++) {
       emptyRows.push(
-        <TableRow>
+        <TableRow key={i}>
           {headerGroups[0].headers.map((column) => (
-            <TableData className={column.id + ' ' + 'empty'}>
+            <TableData className={column.id + ' ' + 'empty'} key={column.id}>
                 <span></span>
             </TableData>
           ))}
