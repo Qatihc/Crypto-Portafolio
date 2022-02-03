@@ -5,13 +5,11 @@ import RowActions from './RowActions';
 import { useSelector } from 'react-redux';
 import { CircleDialog } from '../../CircleDialog';
 import EditableCell from './EditableCell';
-import { TableData, TableHeader, TableRow, TableLayout, CoinNameCell, devices, formatNumber, formatDate } from '~/src/common';
+import { TableData, TableHeader, TableRow, TableLayout, CoinNameCell, devices, formatNumber, formatDate, DEFAULT_PAGE_SIZE, ScrollableContainer, TableActions } from '~/src/common';
 import styled from 'styled-components';
 import PageSelector from './PageSelector';
 
-const ScrollableContainer = styled('div')`
-  overflow: auto;
-`
+
 const TransactionTableData = styled(TableData)`
   &.amount, &.price, &.total {
     justify-content: right;
@@ -48,23 +46,16 @@ const TransactionTableHeader = styled(TableHeader)`
 const TransactionTableRow = styled(TableRow)`
 `
 
-const TableActions = styled.div`
-  display: flex;
-  right: 0;
-  justify-content: space-between;
-  margin: var(--size-2) var(--size-5);
-`
-
 const StickyCircleDialog = styled(CircleDialog)`
 `
 
 const TransactionsTable = () => {
   const [ currentPage, setCurrentPage ] = useState(1);
-  const [ pageSize, setPageSize ] = useState(13);
+  const [ pageSize, setPageSize ] = useState(DEFAULT_PAGE_SIZE);
 
-  const { data: totalTransactions } = useGetTransactionsCountQuery();
-  const { data: response, isLoading } = useGetTransactionsQuery({ pageNumber: currentPage, pageSize });
-  const transactions = response ? response.transactions : [];
+  const { data: count } = useGetTransactionsCountQuery();
+  let { data: transactions, isLoading } = useGetTransactionsQuery({ pageNumber: currentPage, pageSize });
+  transactions = transactions || [];
 
   /* Si borro la ultima transaccion de una pagina, y hay una pagina atras de esta, retrocedo a ella */
   if (transactions.length === 0 && currentPage !== 1) setCurrentPage(currentPage - 1)
@@ -126,9 +117,6 @@ const TransactionsTable = () => {
       }
     })
   }, [transactions])
-
-
-  if (isLoading) return '...cargando...';
   
   const defaultColumn = {
     Cell: ({ row, value, column }) => (column.canUpdate && useSelector(isRowEdit(row.original.id))) ? <EditableCell row={row} value={value} column={column} /> : value
@@ -139,7 +127,7 @@ const TransactionsTable = () => {
       <TableActions>
         <PageSelector 
           pageSize={pageSize}
-          elementCount={totalTransactions}
+          elementCount={count}
           currentPage={currentPage}
           setCurrentPage={setCurrentPage}
         />

@@ -1,9 +1,7 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
-import { useGetCoinsQuery } from '../coinSlice';
-import { TableData, TableHeader, TableRow, TableLayout, CoinNameCell, devices, formatNumber } from '~/src/common';
-
-import Table from './Table';
+import { useGetCoinsQuery, useGetCoinsCountQuery } from '../coinSlice';
+import { TableData, TableHeader, TableRow, TableLayout, CoinNameCell, devices, formatNumber, DEFAULT_PAGE_SIZE, PageSelector, ScrollableContainer, TableActions } from '~/src/common';
 import styled from 'styled-components';
 
 const StyledTableRow = styled(TableRow)`
@@ -13,7 +11,12 @@ const StyledTableRow = styled(TableRow)`
 `
 
 const CoinsTable = () => {
-  let { data: coins, isLoading } = useGetCoinsQuery();
+  const { data: count } = useGetCoinsCountQuery();
+
+  const [ currentPage, setCurrentPage ] = useState(1);
+  const [ pageSize, setPageSize ] = useState(DEFAULT_PAGE_SIZE);
+
+  let { data: coins, isLoading } = useGetCoinsQuery({ pageNumber: currentPage, pageSize });
   coins = coins || [];
 
   const columns = useMemo(() => [
@@ -66,16 +69,27 @@ const CoinsTable = () => {
   }, [coins])
 
   return (
-    <div>
-      <TableLayout 
+    <>
+    <TableActions>
+      <PageSelector
+          pageSize={pageSize}
+          elementCount={count}
+          currentPage={currentPage}
+          setCurrentPage={setCurrentPage}
+        />
+    </TableActions>
+    < ScrollableContainer>
+    <TableLayout 
         data={data}
         columns={columns}
         TableHeader={TableHeader}
         TableData={TableData}
         TableRow={StyledTableRow}
         pageSize={13}
-        />
-    </div>
+      />
+    </ScrollableContainer>
+
+    </>
    )
 }
 

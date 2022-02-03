@@ -5,9 +5,9 @@ import api from "~/src/common/rtkQueryApi";
 const transactionApi = api.injectEndpoints({
   endpoints: (build) => ({
     getTransactionsCount: build.query({
-      query: () => ({ url: `portfolio/count`}),
-      transformResponse: (baseQueryReturnValue) => {
-        return baseQueryReturnValue.totalTransactions;
+      query: () => ({ url: `portfolio/transaction/count`}),
+      transformResponse: (data) => {
+        return data.count;
       },
       providesTags: [{ type: 'transactionCount'}]
     }),

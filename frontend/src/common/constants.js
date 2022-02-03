@@ -5,6 +5,8 @@ export const STATUS = {
   SUCCESS: 'SUCCESS'
 }
 
+export const DEFAULT_PAGE_SIZE = 14;
+
 const sizes = {
   smallScreenMaxSize: '800px',
   mediumScreenMaxSize: '1300px',
