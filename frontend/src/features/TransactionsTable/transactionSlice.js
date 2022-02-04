@@ -26,7 +26,7 @@ const transactionApi = api.injectEndpoints({
 
     createTransaction: build.mutation({
       query: ({ symbol, price, amount, date }) => ({
-        url: `portfolio/createTransaction`,
+        url: `portfolio/transaction/create`,
         method: 'POST',
         data: { symbol, price, amount, date },
       }),
@@ -35,7 +35,7 @@ const transactionApi = api.injectEndpoints({
 
     updateTransaction: build.mutation({
       query: ({ id, ...data }) => ({
-        url: 'portfolio/updateTransaction',
+        url: 'portfolio/transaction/update',
         method: 'POST',
         data: { transactionId: id, ...data }
       }),
@@ -44,7 +44,7 @@ const transactionApi = api.injectEndpoints({
 
     deleteTransaction: build.mutation({
       query: ({ transactionId }) => ({
-        url: 'portfolio/deleteTransaction',
+        url: 'portfolio/transaction/delete',
         method: 'POST',
         data: { transactionId }
       }),
