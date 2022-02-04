@@ -3,7 +3,6 @@ const express = require('express');
 const cors = require('cors');
 const ApiRouter = require('./routes/index.js');
 const app = express();
-const initializeCoinGeckoFetchJobs = require('./services/initializeCoinGeckoFetchJobs');
 
 app.use(cors());
 app.use(express.json());
@@ -30,8 +29,6 @@ app.use((err, req, res, next) => {
 
   return res.status(500).send('Internal server error.')
 })
-
-initializeCoinGeckoFetchJobs();
 
 
 module.exports = app;

@@ -19,8 +19,8 @@ portfolioRouter.get('/coin/count', requireAuth, retrieveUserCoinsCount);
 portfolioRouter.get('/transaction', requireAuth, retrieveTransactions);
 portfolioRouter.get('/transaction/count', requireAuth, retrieveTransactionsCount);
 
-portfolioRouter.post('/createTransaction', requireAuth, createTransaction);
-portfolioRouter.post('/deleteTransaction', requireAuth, deleteTransactions);
-portfolioRouter.post('/updateTransaction', requireAuth, updateTransaction);
+portfolioRouter.post('/transaction/create', requireAuth, createTransaction);
+portfolioRouter.post('/transaction/delete', requireAuth, deleteTransactions);
+portfolioRouter.post('/transaction/update', requireAuth, updateTransaction);
 
 module.exports = portfolioRouter;

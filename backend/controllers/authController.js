@@ -82,14 +82,13 @@ const login = async (req, res, next) => {
     return res.status(400).json({ errors: errors.array() });
   }
 
-  const {token} = req.headers;
-  const {username, password} = req.body;
+  const { token } = req.headers;
+  const { username, password } = req.body;
 
   if (token) {
     try {
       const user = await findJwtUser(token);
       if (user) return res.send({"username": user.username, "token": token})
-
     } catch (err) {
       return next(err);
     }
@@ -112,7 +111,7 @@ const login = async (req, res, next) => {
 }
 
 const requireAuth = async (req, res, next) => {
-  const {token} = req.headers;
+  const { token } = req.headers;
   if (!token) return next(new RequestError(inputErrorMessages.authRequired, 401));
   try {
     const user = await findJwtUser(token);

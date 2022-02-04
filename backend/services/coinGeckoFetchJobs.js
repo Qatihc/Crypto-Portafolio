@@ -1,9 +1,11 @@
-const {fetchSupportedCoinsList, fetchCoinPrices}  = require('./CoinGeckoApiRequests')
+const { fetchSupportedCoinsList, fetchCoinPrices }  = require('./coinGeckoApiRequests')
 const schedule = require('node-schedule');
 const CoinMarketData = require('../models/coinMarketDataSchema');
 
-const initializeCoinGeckoFetchJobs = () => {
+let jobUpdateSupportedCoins;
+let jobUpdateCoinPrices;
 
+const startCoinGeckoFetchJobs = async () => {
   const updateSupportedCoins = async () => {
     try {
       const supportedCoins = await fetchSupportedCoinsList();
@@ -16,13 +18,11 @@ const initializeCoinGeckoFetchJobs = () => {
       console.log(err);
     }
   }
-
   const updateCoinMarketData = async () => {
     try {
       const supportedCoins = await CoinMarketData.find({}, 'coinGeckoId', { lean: true });
       const supportedCoinsIds = supportedCoins.map((coin) => coin.coinGeckoId);
-      const coinsMarketData = await fetchCoinPrices(supportedCoinsIds)
-
+      const coinsMarketData = await fetchCoinPrices(supportedCoinsIds);
       await CoinMarketData.bulkWrite(supportedCoins.map(coin => {
         const { coinGeckoId } = coin;
         const coinData = coinsMarketData[coinGeckoId];
@@ -44,8 +44,15 @@ const initializeCoinGeckoFetchJobs = () => {
     }
   };
 
- // const jobUpdateSupportedCoins = schedule.scheduleJob('* * */1 * *', updateSupportedCoins);
- // const jobUpdateCoinPrices = schedule.scheduleJob('* * */5 * * *', updateCoinMarketData);
+  jobUpdateSupportedCoins = schedule.scheduleJob('* * */1 * *', updateSupportedCoins);
+  jobUpdateCoinPrices = schedule.scheduleJob('* * */5 * * *', updateCoinMarketData);
+  await updateSupportedCoins();
+  await updateCoinMarketData();
 }
 
-module.exports = initializeCoinGeckoFetchJobs
+const cancelCoinGeckoFetchJobs = () => {
+  jobUpdateSupportedCoins?.cancel();
+  jobUpdateCoinPrices?.cancel();
+}
+
+module.exports = { startCoinGeckoFetchJobs, cancelCoinGeckoFetchJobs };

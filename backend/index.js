@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const app = require('./app');
+const { startCoinGeckoFetchJobs } = require('./services/coinGeckoFetchJobs');
 const PORT = process.env.PORT || 5500;
 
 const server = app.listen(PORT, () => {
@@ -13,6 +14,7 @@ const server = app.listen(PORT, () => {
       useUnifiedTopology: true,
       useCreateIndex: true,
     });
+    startCoinGeckoFetchJobs();
   }
   catch(e){
     console.error('No se pudo establecer conexion con la base de datos.')
