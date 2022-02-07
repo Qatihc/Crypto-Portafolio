@@ -1,9 +1,9 @@
 import axios from "axios";
 import { getCurrentUser } from "./user/persistUser";
-
+const URL = process.env.URL || 'localhost:5501'
 /* Creo una unica instancia de axios que luego uso en todos los servicios. */
 const axiosInstance = axios.create({
-  baseURL: 'http://192.168.0.8:5501/api',
+  baseURL: `${URL}api`,
 });
 
 axiosInstance.interceptors.request.use((config) => {

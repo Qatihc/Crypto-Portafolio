@@ -1,3 +1,4 @@
+const webpack = require('webpack');
 const path = require('path');
 const HtmlWebPackPlugin = require('html-webpack-plugin');
 
@@ -44,6 +45,9 @@ module.exports = {
     new HtmlWebPackPlugin({
       template: './src/index.html',
     }),
+    new webpack.DefinePlugin({
+      'process.env.URL': JSON.stringify(process.env.URL),
+    })
   ],
   devtool: 'source-map',
   devServer: {

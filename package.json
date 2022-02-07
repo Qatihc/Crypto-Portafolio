@@ -1,0 +1,6 @@
+{
+	"scripts": {
+	"postinstall": "npm install --prefix backend && cd frontend && npm install --only=dev && npm install && npm run build",
+	"start": "node backend/index.js"
+	}
+}

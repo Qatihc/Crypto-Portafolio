@@ -12,7 +12,6 @@ const login = async (requestBody) => {
 }
 
 const signup = async (requestBody) => {
-  console.log('asdasdasd')
   try {
     console.log('try')
     await axios.post('/auth/register', requestBody);

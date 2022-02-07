@@ -5,7 +5,7 @@
   "main": "main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "webpack serve --mode=development --open --hot --host 192.168.0.8",
+    "start": "webpack serve --mode=development --open --hot --host 192.168.0.8 process.env.PORT='\"5501\"'",
     "build": "webpack --mode=production"
   },
   "author": "",
