@@ -15,7 +15,6 @@ const startCoinGeckoFetchJobs = async () => {
     } catch (err) {
       const DUPLICATED_KEY_CODE = 11000
       if (err.code === DUPLICATED_KEY_CODE) return;
-      console.log(err);
     }
   }
   const updateCoinMarketData = async () => {
@@ -26,11 +25,15 @@ const startCoinGeckoFetchJobs = async () => {
       await CoinMarketData.bulkWrite(supportedCoins.map(coin => {
         const { coinGeckoId } = coin;
         const coinData = coinsMarketData[coinGeckoId];
-        const update = {
-          price: coinData.usd,
-          marketCap: coinData.usd_market_cap,
-          dailyChange: coinData.usd_24h_change
-        }
+        const update = 
+          (coinData) ? 
+          {
+            price: coinData.usd,
+            marketCap: coinData.usd_market_cap,
+            dailyChange: coinData.usd_24h_change
+          } :
+          {}
+
         return { 
           updateOne: {
             filter: { coinGeckoId },
@@ -40,14 +43,15 @@ const startCoinGeckoFetchJobs = async () => {
         }
       }))
     } catch (err) {
-      console.log(err)
+      return;
     }
   };
 
-  jobUpdateSupportedCoins = schedule.scheduleJob('* * */1 * *', updateSupportedCoins);
-  jobUpdateCoinPrices = schedule.scheduleJob('* * */5 * * *', updateCoinMarketData);
-  await updateSupportedCoins();
-  await updateCoinMarketData();
+
+  //await updateSupportedCoins();
+  //await updateCoinMarketData();
+  //jobUpdateSupportedCoins = schedule.scheduleJob('* * */1 * *', updateSupportedCoins);
+  //jobUpdateCoinPrices = schedule.scheduleJob('* * */5 * * *', updateCoinMarketData);
 }
 
 const cancelCoinGeckoFetchJobs = () => {
