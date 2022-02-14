@@ -1,4 +1,3 @@
-const Portfolio = require('../models/portfolioSchema');
 const UserCoin = require('../models/userCoinSchema');
 const Transaction = require('../models/transactionSchema')
 const CoinMarketData = require('../models/coinMarketDataSchema');

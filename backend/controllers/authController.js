@@ -5,6 +5,8 @@ const User = require('../models/userSchema');
 const Portfolio = require('../models/portfolioSchema');
 const { validationResult } = require('express-validator');
 const inputErrorMessages = require('./validator/errorMessages');
+const UserServices = require('../services/UserServices');
+const AuthServices = require('../services/AuthServices');
 
 const findJwtUser = (token) => {
   return new Promise(async (resolve, reject) => {
@@ -32,7 +34,7 @@ const registerUser = async (req, res, next) => {
     return res.status(400).json({ errors: errors.array() });
   }
 
-  const {username, password} = req.body;
+  const { username, password } = req.body;
   try {
     const user = await User.findOne({username_lower: username.toLowerCase()});
     if (user) return next(new RequestError(inputErrorMessages.duplicatedUser, 400))
@@ -59,7 +61,7 @@ const changePassword = async (req, res, next) => {
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
   }
-  /* CHEQUEAR ESTO QUE CUALQUIER USER PUEDE CAMBIAR LA CONTRASENIA DE OTRO!!!!!!!! WTF */
+  /* CHEQUEAR ESTO QUE CUALQUIER USER PUEDE CAMBIAR LA CONTRASENIA DE OTRO!! */
   const { password, newPassword } = req.body;
   const { user } = req.locals;
   try {
