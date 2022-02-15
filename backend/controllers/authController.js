@@ -1,12 +1,7 @@
-const jwt = require('jsonwebtoken');
-const bcrypt = require('bcrypt');
 const RequestError = require('./utils/errorTypes/RequestError');
-const User = require('../models/userSchema');
-const Portfolio = require('../models/portfolioSchema');
 const { validationResult } = require('express-validator');
 const inputErrorMessages = require('./validator/errorMessages');
 const UserServices = require('../services/UserServices');
-const AuthServices = require('../services/AuthServices');
 
 const registerUser = async (req, res, next) => {
   const errors = validationResult(req);
