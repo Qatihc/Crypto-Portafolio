@@ -2,8 +2,8 @@ const RequestError = require("../controllers/utils/errorTypes/RequestError");
 const User = require("../models/userSchema");
 const Portfolio = require("../models/portfolioSchema");
 const inputErrorMessages = require("../controllers/validator/errorMessages");
-const AuthServices = require("./AuthServices");
 const bcrypt = require('bcrypt');
+const jwt = require("jsonwebtoken");
 
 module.exports = class UserServices {
   static register = async ({ username, password }) => {  
@@ -37,7 +37,7 @@ module.exports = class UserServices {
 
     const passwordMatches = await bcrypt.compare(password, user.password);
     if (passwordMatches) {
-      const token = await AuthServices.generateToken(user);
+      const token = await this.generateToken({ user });
       return { username, token };
     } 
     return next(new RequestError(inputErrorMessages.invalidPassword, 401));
@@ -52,7 +52,7 @@ module.exports = class UserServices {
   }
 
   static getUserFromToken = async ({ token }) => {
-    const { id } = this.decodeToken(token);
+    const { id } = this.decodeToken({ token });
     const user = await User.findOne({ _id: id });
     return user;
   }

@@ -30,7 +30,7 @@ app.use((err, req, res, next) => {
   }
 
   // Si no tiene err status code asumo que es 500
-  consle.log(err)
+  console.log(err)
   
   if (process.env.DEVELOPMENT) return res.status(500).send(err)
 
