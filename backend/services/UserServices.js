@@ -6,7 +6,7 @@ const AuthServices = require("./AuthServices");
 const bcrypt = require('bcrypt');
 
 module.exports = class UserServices {
-  register = async ({ username, password }) => {  
+  static register = async ({ username, password }) => {  
     const user = await User.findOne({username_lower: username.toLowerCase()});
     if (user) return next(new RequestError(inputErrorMessages.duplicatedUser, 400));
 
@@ -19,7 +19,7 @@ module.exports = class UserServices {
     });
   }
 
-  changePassword = async ({ username, password, newPassword }) => {
+  static changePassword = async ({ username, password, newPassword }) => {
     const user = await User.findOne({username_lower: username.toLowerCase()});
     const passwordMatches = await bcrypt.compare(password, user.password);
     if (passwordMatches) {
@@ -31,15 +31,29 @@ module.exports = class UserServices {
     }
   }
 
-  login = async ({ username, password }) => { 
+  static login = async ({ username, password }) => { 
     const user = await User.findOne({username_lower: username.toLowerCase()});
     if (!user) throw (new RequestError(inputErrorMessages.userNotFound, 400));
 
     const passwordMatches = await bcrypt.compare(password, user.password);
     if (passwordMatches) {
       const token = await AuthServices.generateToken(user);
-      return res.send({"username": username, "token": token});
+      return { username, token };
     } 
     return next(new RequestError(inputErrorMessages.invalidPassword, 401));
+  }
+
+  static generateToken = ({ user }) => {
+    return jwt.sign({ id: user._id }, process.env.JWT_SECRET);
+  }
+
+  static decodeToken = ({ token }) => {
+    return jwt.verify(token, process.env.JWT_SECRET);
+  }
+
+  static getUserFromToken = async ({ token }) => {
+    const { id } = this.decodeToken(token);
+    const user = await User.findOne({ _id: id });
+    return user;
   }
 }
