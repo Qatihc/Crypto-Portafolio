@@ -24,7 +24,6 @@ const fetchSupportedCoinsList = async (app) => {
   }
 }
 
-/* TODO: reintentar luego de un minuto si el error es 429 */
 const fetchCoinPrices = async (coinGeckoIds) => {
   if (!coinGeckoIds) return;
   try {
@@ -73,4 +72,4 @@ const fetchCoinPrices = async (coinGeckoIds) => {
 
 
 
-module.exports = {fetchSupportedCoinsList, fetchCoinPrices}
+module.exports = { fetchSupportedCoinsList, fetchCoinPrices }
