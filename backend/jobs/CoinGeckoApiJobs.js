@@ -1,4 +1,5 @@
 const schedule = require('node-schedule');
+const { updateSupportedCoins, updateCoinMarketData } = require('../services/CoinGeckoServices');
 
 const startUpdateSupportedCoins = () => {
   const jobUpdateSupportedCoins = schedule.scheduleJob('* * */1 * *', updateSupportedCoins);

@@ -1,11 +1,17 @@
 const mongoose = require('mongoose');
+require('dotenv').config();
 const app = require('./app');
-const { startCoinGeckoFetchJobs } = require('./services/coinGeckoFetchJobs');
 const PORT = process.env.PORT || 5500;
+const { 
+  startUpdateSupportedCoins,
+  startJobUpdateCoinPrices
+} = require('./jobs/CoinGeckoApiJobs');
 
 const server = app.listen(PORT, () => {
   console.log('App currently listening on port ' + PORT);
 });
+
+console.log(process.env);
 
 (async () => {
   try {
@@ -14,7 +20,9 @@ const server = app.listen(PORT, () => {
       useUnifiedTopology: true,
       useCreateIndex: true,
     });
-    startCoinGeckoFetchJobs();
+
+    startUpdateSupportedCoins();
+    startJobUpdateCoinPrices();
   }
   catch(e){
     console.error('No se pudo establecer conexion con la base de datos.')

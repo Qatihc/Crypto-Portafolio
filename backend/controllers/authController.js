@@ -22,7 +22,6 @@ const changePassword = async (req, res, next) => {
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
   }
-  /* CHEQUEAR ESTO QUE CUALQUIER USER PUEDE CAMBIAR LA CONTRASENIA DE OTRO!! */
   const { password, newPassword } = req.body;
   const { user } = req.locals;
   try {

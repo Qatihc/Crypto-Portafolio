@@ -5,7 +5,6 @@ const app = require('../app');
 const UserCoin = require("../models/userCoinSchema");
 const Transaction = require("../models/transactionSchema");
 const { testUser, testTransaction } = require("./testSampleData");
-const { startCoinGeckoFetchJobs, cancelCoinGeckoFetchJobs } = require("../services/coinGeckoFetchJobs");
 const expect = chai.expect;
 
 chai.use(chaiHttp);

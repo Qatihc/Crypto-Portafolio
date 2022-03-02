@@ -2,13 +2,12 @@ const axios = require('axios').default;
 const axiosRetry = require('axios-retry');
 
 
-const fetchSupportedCoinsList = async (app) => {
+const fetchSupportedCoinsList = async () => {
   try {
     axiosRetry(axios, {
-      retries: 5,
+      retries: 2,
       retryDelay: retryCount => {
-        console.log('retray numero ', retryCount)
-        return retryCount * 5000
+        return retryCount * 60000
       }
     });
 
@@ -28,10 +27,9 @@ const fetchCoinPrices = async (coinGeckoIds) => {
   if (!coinGeckoIds) return;
   try {
     axiosRetry(axios, {
-      retries: 5,
+      retries: 2,
       retryDelay: retryCount => {
-        console.log('Retry:  ', retryCount)
-        return retryCount * 5000
+        return retryCount * 60000
       }
     });
   /* La longitud maxima que puede tener una URL para que sea valida es aprox 6000 bytes */
