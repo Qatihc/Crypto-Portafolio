@@ -26,7 +26,7 @@ app.use((err, req, res, next) => {
 
   if (err.status) {
     console.log(err.message)
-    return res.status(err.status).send(err.message)
+    return res.status(err.status).send({ err: err.message });
   }
 
   // Si no tiene err status code asumo que es 500

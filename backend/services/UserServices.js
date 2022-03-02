@@ -8,7 +8,7 @@ const jwt = require("jsonwebtoken");
 module.exports = class UserServices {
   static register = async ({ username, password }) => {  
     const user = await User.findOne({username_lower: username.toLowerCase()});
-    if (user) return next(new RequestError(inputErrorMessages.duplicatedUser, 400));
+    if (user) return next(new RequestError(inputErrorMessages.duplicatedUser));
 
     const portfolio = new Portfolio();
     await portfolio.save();
@@ -27,20 +27,20 @@ module.exports = class UserServices {
       await user.save();
       return;
     } else {
-      throw new RequestError(inputErrorMessages.invalidPassword, 401);
+      throw new RequestError(inputErrorMessages.invalidPassword);
     }
   }
 
   static login = async ({ username, password }) => { 
     const user = await User.findOne({username_lower: username.toLowerCase()});
-    if (!user) throw (new RequestError(inputErrorMessages.userNotFound, 400));
+    if (!user) throw (new RequestError(inputErrorMessages.userNotFound));
 
     const passwordMatches = await bcrypt.compare(password, user.password);
     if (passwordMatches) {
       const token = await this.generateToken({ user });
       return { username, token };
     } 
-    return next(new RequestError(inputErrorMessages.invalidPassword, 401));
+    return next(new RequestError(inputErrorMessages.invalidPassword));
   }
 
   static generateToken = ({ user }) => {

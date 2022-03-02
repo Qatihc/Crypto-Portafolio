@@ -1,4 +1,4 @@
-const RequestError = require('./utils/errorTypes/RequestError');
+const RequestError = require('../errors/RequestError');
 const { validationResult } = require('express-validator');
 const inputErrorMessages = require('./validator/errorMessages');
 const UserServices = require('../services/UserServices');
@@ -6,7 +6,7 @@ const UserServices = require('../services/UserServices');
 const registerUser = async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() });
+    return next(new RequestError(errors.array[0]));
   }
   const { username, password } = req.body;
   try {
@@ -20,7 +20,7 @@ const registerUser = async (req, res, next) => {
 const changePassword = async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() });
+    return next(new RequestError(errors.array[0]));
   }
   const { password, newPassword } = req.body;
   const { user } = req.locals;
@@ -35,7 +35,7 @@ const changePassword = async (req, res, next) => {
 const login = async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() });
+    return next(new RequestError(errors.array[0]));
   }
 
   const { username, password } = req.body;
@@ -49,7 +49,7 @@ const login = async (req, res, next) => {
 
 const requireAuth = async (req, res, next) => {
   const { token } = req.headers;
-  if (!token) return next(new RequestError(inputErrorMessages.authRequired, 401));
+  if (!token) return next(new RequestError(inputErrorMessages.authRequired));
   try {
     const user = await UserServices.getUserFromToken({ token });
     res.locals.user = user;
